@@ -6,35 +6,75 @@
     android:padding="16dp"
     android:background="@drawable/widget_background">
 
-    <!-- En-tête avec nom du circuit -->
+    <!-- En-tête avec drapeau, nom du GP et dates -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
+        android:orientation="vertical"
         android:paddingBottom="8dp">
 
-        <TextView
-            android:id="@+id/race_name"
-            android:layout_width="0dp"
+        <!-- Ligne 1: Drapeau + Nom GP + Round -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Monaco GP"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
-            android:textStyle="bold"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/country_flag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🇦🇺"
+                android:textSize="24sp"
+                android:paddingEnd="8dp"
+                android:paddingStart="0dp" />
+
+            <TextView
+                android:id="@+id/race_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Monaco GP"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:ellipsize="end"
+                android:maxLines="1" />
+
+            <TextView
+                android:id="@+id/race_round"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Round 8/24"
+                android:textColor="#00D9FF"
+                android:textSize="12sp"
+                android:paddingStart="8dp"
+                android:paddingEnd="0dp" />
+        </LinearLayout>
+
+        <!-- Ligne 2: Nom du circuit -->
+        <TextView
+            android:id="@+id/circuit_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Circuit de Monaco"
+            android:textColor="#AAAAAA"
+            android:textSize="13sp"
+            android:paddingTop="2dp"
+            android:paddingStart="32dp"
             android:ellipsize="end"
             android:maxLines="1" />
 
+        <!-- Ligne 3: Dates du weekend -->
         <TextView
-            android:id="@+id/race_round"
-            android:layout_width="wrap_content"
+            android:id="@+id/weekend_dates"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Round 8"
-            android:textColor="#00D9FF"
-            android:textSize="14sp"
-            android:paddingStart="8dp"
-            android:paddingEnd="0dp" />
+            android:text="06 - 08 mars"
+            android:textColor="#888888"
+            android:textSize="12sp"
+            android:paddingTop="2dp"
+            android:paddingStart="32dp" />
     </LinearLayout>
 
     <!-- Tracé du circuit -->

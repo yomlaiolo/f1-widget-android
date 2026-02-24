@@ -8,6 +8,8 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.yomlaiolo.f1widget.data.F1ApiService
 import com.yomlaiolo.f1widget.data.repository.F1Repository
+import com.yomlaiolo.f1widget.utils.CountryFlags
+import com.yomlaiolo.f1widget.utils.DateFormatter
 
 class F1WidgetUpdateWorker(
     context: Context,
@@ -21,17 +23,43 @@ class F1WidgetUpdateWorker(
             val apiService = F1ApiService.create()
             val repository = F1Repository(apiService)
             
-            val nextRace = repository.getUpcomingRace()
+            val raceWithContext = repository.getUpcomingRace()
             
-            if (nextRace != null) {
-                Log.d("F1WidgetWorker", "Got race data: ${nextRace.raceName}")
+            if (raceWithContext != null) {
+                val nextRace = raceWithContext.race
+                val totalRaces = raceWithContext.totalRaces
+                
+                Log.d("F1WidgetWorker", "Got race data: ${nextRace.raceName} (${nextRace.round}/$totalRaces)")
+                
+                // Déterminer la date de début du weekend (première session)
+                val firstSessionDate = listOfNotNull(
+                    nextRace.firstPractice?.date,
+                    nextRace.secondPractice?.date,
+                    nextRace.thirdPractice?.date,
+                    nextRace.sprint?.date,
+                    nextRace.qualifying?.date,
+                    nextRace.date
+                ).minOrNull() ?: nextRace.date
+                
+                // Date de fin = date de la course
+                val lastSessionDate = nextRace.date
+                
+                // Formater les dates du weekend
+                val weekendDates = DateFormatter.formatWeekendDates(firstSessionDate, lastSessionDate)
+                
+                // Récupérer le drapeau du pays
+                val countryFlag = CountryFlags.getFlag(nextRace.circuit.location.country)
                 
                 // Sauvegarder dans SharedPreferences
                 val prefs = applicationContext.getSharedPreferences("F1Widget", Context.MODE_PRIVATE)
                 prefs.edit().apply {
                     putString("race_name", nextRace.raceName)
                     putString("race_round", nextRace.round)
+                    putInt("total_races", totalRaces)
                     putString("circuit_id", nextRace.circuit.circuitId)
+                    putString("circuit_name", nextRace.circuit.circuitName)
+                    putString("country_flag", countryFlag)
+                    putString("weekend_dates", weekendDates)
                     
                     // Sessions
                     nextRace.firstPractice?.let {

@@ -25,7 +25,12 @@ class F1Repository(private val apiService: F1ApiService) {
         }
     }
     
-    suspend fun getUpcomingRace(): Race? = withContext(Dispatchers.IO) {
+    data class RaceWithContext(
+        val race: Race,
+        val totalRaces: Int
+    )
+    
+    suspend fun getUpcomingRace(): RaceWithContext? = withContext(Dispatchers.IO) {
         try {
             val year = Calendar.getInstance().get(Calendar.YEAR)
             val response = apiService.getSeasonCalendar(year)
@@ -36,13 +41,20 @@ class F1Repository(private val apiService: F1ApiService) {
                 val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                 
                 // Trouver la prochaine course
-                races.firstOrNull { race ->
+                val nextRace = races.firstOrNull { race ->
                     try {
                         val raceDate = dateFormat.parse(race.date)
                         raceDate?.after(now) ?: false
                     } catch (e: Exception) {
                         false
                     }
+                }
+                
+                nextRace?.let { 
+                    RaceWithContext(
+                        race = it,
+                        totalRaces = races.size
+                    )
                 }
             } else {
                 null
