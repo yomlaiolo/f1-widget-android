@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@drawable/widget_background">
+
+    <!-- En-tête avec nom du circuit -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingBottom="8dp">
+
+        <TextView
+            android:id="@+id/race_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Monaco GP"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:ellipsize="end"
+            android:maxLines="1" />
+
+        <TextView
+            android:id="@+id/race_round"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Round 8"
+            android:textColor="#00D9FF"
+            android:textSize="14sp"
+            android:paddingStart="8dp"
+            android:paddingEnd="0dp" />
+    </LinearLayout>
+
+    <!-- Tracé du circuit -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="#1A1A1A"
+        android:padding="8dp">
+
+        <ImageView
+            android:id="@+id/circuit_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitCenter"
+            android:contentDescription="Circuit layout" />
+    </FrameLayout>
+
+    <!-- Sessions de la semaine -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="12dp">
+
+        <!-- FP1 -->
+        <LinearLayout
+            android:id="@+id/fp1_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingVertical="4dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:text="FP1"
+                android:textColor="#888888"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/fp1_datetime"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Ven 15:30"
+                android:textColor="#CCCCCC"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- FP2 -->
+        <LinearLayout
+            android:id="@+id/fp2_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingVertical="4dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:text="FP2"
+                android:textColor="#888888"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/fp2_datetime"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Ven 19:00"
+                android:textColor="#CCCCCC"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- FP3 -->
+        <LinearLayout
+            android:id="@+id/fp3_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingVertical="4dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:text="FP3"
+                android:textColor="#888888"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/fp3_datetime"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Sam 14:00"
+                android:textColor="#CCCCCC"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- Sprint -->
+        <LinearLayout
+            android:id="@+id/sprint_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingVertical="4dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:text="SPRINT"
+                android:textColor="#FF6600"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/sprint_datetime"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Sam 16:30"
+                android:textColor="#CCCCCC"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- Qualifying -->
+        <LinearLayout
+            android:id="@+id/quali_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingVertical="4dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:text="QUALIFS"
+                android:textColor="#FFD700"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/quali_datetime"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Sam 17:00"
+                android:textColor="#CCCCCC"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- Race -->
+        <LinearLayout
+            android:id="@+id/race_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingVertical="4dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:text="COURSE"
+                android:textColor="#E10600"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/race_datetime"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Dim 15:00"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Dernière mise à jour -->
+    <TextView
+        android:id="@+id/last_update"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Mis à jour il y a 5 min"
+        android:textColor="#555555"
+        android:textSize="10sp"
+        android:gravity="end"
+        android:paddingTop="8dp" />
+
+</LinearLayout>

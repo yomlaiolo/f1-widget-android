@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">F1 Widget</string>
+    <string name="app_widget_description">Affiche le tracé et les horaires du prochain Grand Prix de Formule 1</string>
+</resources>
