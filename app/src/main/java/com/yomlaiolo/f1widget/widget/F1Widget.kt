@@ -7,8 +7,7 @@ import android.util.Log
 import android.widget.RemoteViews
 import androidx.work.*
 import com.yomlaiolo.f1widget.R
-import java.text.SimpleDateFormat
-import java.util.*
+import com.yomlaiolo.f1widget.utils.DateFormatter
 import java.util.concurrent.TimeUnit
 
 class F1Widget : AppWidgetProvider() {
@@ -94,19 +93,38 @@ class F1Widget : AppWidgetProvider() {
             
             val raceName = prefs.getString("race_name", "Loading...") ?: "Loading..."
             val round = prefs.getString("race_round", "") ?: ""
+            val totalRaces = prefs.getInt("total_races", 0)
             val circuitId = prefs.getString("circuit_id", "") ?: ""
+            val circuitName = prefs.getString("circuit_name", "") ?: ""
+            val countryFlag = prefs.getString("country_flag", "🏁") ?: "🏁"
+            val weekendDates = prefs.getString("weekend_dates", "") ?: ""
             
-            Log.d("F1Widget", "Updating widget with race: $raceName, round: $round")
+            Log.d("F1Widget", "Updating widget with race: $raceName, round: $round/$totalRaces")
             
+            // Afficher les informations
+            views.setTextViewText(R.id.country_flag, countryFlag)
             views.setTextViewText(R.id.race_name, raceName)
-            views.setTextViewText(R.id.race_round, "Round $round")
+            
+            // Format du round: "Round 8/24"
+            val roundText = if (totalRaces > 0) {
+                "Round $round/$totalRaces"
+            } else {
+                "Round $round"
+            }
+            views.setTextViewText(R.id.race_round, roundText)
+            
+            // Nom du circuit
+            views.setTextViewText(R.id.circuit_name, circuitName)
+            
+            // Dates du weekend
+            views.setTextViewText(R.id.weekend_dates, weekendDates)
             
             // Charger l'image du circuit
             val circuitImageRes = getCircuitDrawable(context, circuitId)
             views.setImageViewResource(R.id.circuit_image, circuitImageRes)
             
             // Afficher les sessions
-            updateSessionViews(views, prefs, context)
+            updateSessionViews(views, prefs)
             
             // Dernière mise à jour
             val lastUpdate = prefs.getLong("last_update", 0)
@@ -124,31 +142,18 @@ class F1Widget : AppWidgetProvider() {
 
         private fun updateSessionViews(
             views: RemoteViews,
-            prefs: android.content.SharedPreferences,
-            context: Context
+            prefs: android.content.SharedPreferences
         ) {
-            // L'API retourne les dates au format "2024-03-15" et les heures au format "14:30:00Z"
-            val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault()).apply {
-                timeZone = TimeZone.getTimeZone("UTC")
-            }
-            val displayFormat = SimpleDateFormat("EEE HH:mm", Locale.FRENCH).apply {
-                timeZone = TimeZone.getDefault()
-            }
-            
             // FP1
             val fp1Date = prefs.getString("fp1_date", null)
             val fp1Time = prefs.getString("fp1_time", null)
             if (fp1Date != null && fp1Time != null) {
-                try {
-                    val dateTimeStr = "${fp1Date}T$fp1Time"
-                    Log.d("F1Widget", "Parsing FP1: $dateTimeStr")
-                    val dateTime = inputFormat.parse(dateTimeStr)
-                    val formatted = displayFormat.format(dateTime!!)
+                val formatted = DateFormatter.formatSessionDateTime(fp1Date, fp1Time)
+                if (formatted.isNotEmpty()) {
                     views.setTextViewText(R.id.fp1_datetime, formatted)
                     views.setViewVisibility(R.id.fp1_container, android.view.View.VISIBLE)
                     Log.d("F1Widget", "FP1 displayed: $formatted")
-                } catch (e: Exception) {
-                    Log.e("F1Widget", "Error parsing FP1: ${e.message}")
+                } else {
                     views.setViewVisibility(R.id.fp1_container, android.view.View.GONE)
                 }
             } else {
@@ -159,15 +164,12 @@ class F1Widget : AppWidgetProvider() {
             val fp2Date = prefs.getString("fp2_date", null)
             val fp2Time = prefs.getString("fp2_time", null)
             if (fp2Date != null && fp2Time != null) {
-                try {
-                    val dateTimeStr = "${fp2Date}T$fp2Time"
-                    val dateTime = inputFormat.parse(dateTimeStr)
-                    val formatted = displayFormat.format(dateTime!!)
+                val formatted = DateFormatter.formatSessionDateTime(fp2Date, fp2Time)
+                if (formatted.isNotEmpty()) {
                     views.setTextViewText(R.id.fp2_datetime, formatted)
                     views.setViewVisibility(R.id.fp2_container, android.view.View.VISIBLE)
                     Log.d("F1Widget", "FP2 displayed: $formatted")
-                } catch (e: Exception) {
-                    Log.e("F1Widget", "Error parsing FP2: ${e.message}")
+                } else {
                     views.setViewVisibility(R.id.fp2_container, android.view.View.GONE)
                 }
             } else {
@@ -178,15 +180,12 @@ class F1Widget : AppWidgetProvider() {
             val fp3Date = prefs.getString("fp3_date", null)
             val fp3Time = prefs.getString("fp3_time", null)
             if (fp3Date != null && fp3Time != null) {
-                try {
-                    val dateTimeStr = "${fp3Date}T$fp3Time"
-                    val dateTime = inputFormat.parse(dateTimeStr)
-                    val formatted = displayFormat.format(dateTime!!)
+                val formatted = DateFormatter.formatSessionDateTime(fp3Date, fp3Time)
+                if (formatted.isNotEmpty()) {
                     views.setTextViewText(R.id.fp3_datetime, formatted)
                     views.setViewVisibility(R.id.fp3_container, android.view.View.VISIBLE)
                     Log.d("F1Widget", "FP3 displayed: $formatted")
-                } catch (e: Exception) {
-                    Log.e("F1Widget", "Error parsing FP3: ${e.message}")
+                } else {
                     views.setViewVisibility(R.id.fp3_container, android.view.View.GONE)
                 }
             } else {
@@ -197,15 +196,12 @@ class F1Widget : AppWidgetProvider() {
             val sprintDate = prefs.getString("sprint_date", null)
             val sprintTime = prefs.getString("sprint_time", null)
             if (sprintDate != null && sprintTime != null) {
-                try {
-                    val dateTimeStr = "${sprintDate}T$sprintTime"
-                    val dateTime = inputFormat.parse(dateTimeStr)
-                    val formatted = displayFormat.format(dateTime!!)
+                val formatted = DateFormatter.formatSessionDateTime(sprintDate, sprintTime)
+                if (formatted.isNotEmpty()) {
                     views.setTextViewText(R.id.sprint_datetime, formatted)
                     views.setViewVisibility(R.id.sprint_container, android.view.View.VISIBLE)
                     Log.d("F1Widget", "Sprint displayed: $formatted")
-                } catch (e: Exception) {
-                    Log.e("F1Widget", "Error parsing Sprint: ${e.message}")
+                } else {
                     views.setViewVisibility(R.id.sprint_container, android.view.View.GONE)
                 }
             } else {
@@ -216,15 +212,12 @@ class F1Widget : AppWidgetProvider() {
             val qualiDate = prefs.getString("quali_date", null)
             val qualiTime = prefs.getString("quali_time", null)
             if (qualiDate != null && qualiTime != null) {
-                try {
-                    val dateTimeStr = "${qualiDate}T$qualiTime"
-                    val dateTime = inputFormat.parse(dateTimeStr)
-                    val formatted = displayFormat.format(dateTime!!)
+                val formatted = DateFormatter.formatSessionDateTime(qualiDate, qualiTime)
+                if (formatted.isNotEmpty()) {
                     views.setTextViewText(R.id.quali_datetime, formatted)
                     views.setViewVisibility(R.id.quali_container, android.view.View.VISIBLE)
                     Log.d("F1Widget", "Quali displayed: $formatted")
-                } catch (e: Exception) {
-                    Log.e("F1Widget", "Error parsing Quali: ${e.message}")
+                } else {
                     views.setViewVisibility(R.id.quali_container, android.view.View.GONE)
                 }
             } else {
@@ -235,15 +228,12 @@ class F1Widget : AppWidgetProvider() {
             val raceDate = prefs.getString("race_date", null)
             val raceTime = prefs.getString("race_time", null)
             if (raceDate != null && raceTime != null) {
-                try {
-                    val dateTimeStr = "${raceDate}T$raceTime"
-                    val dateTime = inputFormat.parse(dateTimeStr)
-                    val formatted = displayFormat.format(dateTime!!)
+                val formatted = DateFormatter.formatSessionDateTime(raceDate, raceTime)
+                if (formatted.isNotEmpty()) {
                     views.setTextViewText(R.id.race_datetime, formatted)
                     views.setViewVisibility(R.id.race_container, android.view.View.VISIBLE)
                     Log.d("F1Widget", "Race displayed: $formatted")
-                } catch (e: Exception) {
-                    Log.e("F1Widget", "Error parsing Race: ${e.message}")
+                } else {
                     views.setViewVisibility(R.id.race_container, android.view.View.GONE)
                 }
             } else {
