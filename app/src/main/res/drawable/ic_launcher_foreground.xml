@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    
+    <!-- F1 Logo stylisé -->
+    <group
+        android:scaleX="0.8"
+        android:scaleY="0.8"
+        android:translateX="54"
+        android:translateY="54">
+        
+        <!-- Lettre F -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M-15,-20 L5,-20 L5,-15 L-10,-15 L-10,-8 L2,-8 L2,-3 L-10,-3 L-10,10 L-15,10 Z" />
+        
+        <!-- Chiffre 1 -->
+        <path
+            android:fillColor="#E10600"
+            android:pathData="M8,-20 L13,-20 L13,10 L8,10 Z M8,-20 L6,-18 L6,-15 L8,-15 Z" />
+        
+        <!-- Ligne de vitesse -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M-20,15 L15,15 L15,17 L-20,17 Z"
+            android:fillAlpha="0.5" />
+        
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M-15,20 L10,20 L10,22 L-15,22 Z"
+            android:fillAlpha="0.3" />
+    </group>
+</vector>
