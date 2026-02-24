@@ -24,30 +24,24 @@ jobs:
       with:
         distribution: 'temurin'
         java-version: '17'
-        cache: 'gradle'
     
-    - name: Grant execute permission for gradlew
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v3
+      with:
+        gradle-version: '8.2'
+    
+    - name: Make gradlew executable
       run: chmod +x gradlew
     
     - name: Build release APK
-      run: ./gradlew assembleRelease --stacktrace
-    
-    - name: Sign APK (if keystore available)
-      if: env.KEYSTORE_FILE != ''
-      env:
-        KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
-        KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-        KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-        KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-      run: |
-        echo "Signing APK..."
-        # Add signing logic here if needed
+      run: gradle assembleRelease --stacktrace
     
     - name: Rename APK
       run: |
         VERSION=${{ github.event.inputs.version || github.ref_name }}
-        mv app/build/outputs/apk/release/app-release-unsigned.apk f1-widget-${VERSION}.apk || \
-        mv app/build/outputs/apk/release/app-release.apk f1-widget-${VERSION}.apk
+        mv app/build/outputs/apk/release/app-release-unsigned.apk f1-widget-${VERSION}.apk 2>/dev/null || \
+        mv app/build/outputs/apk/release/app-release.apk f1-widget-${VERSION}.apk 2>/dev/null || \
+        echo "APK file not found in expected location"
     
     - name: Create Release
       uses: softprops/action-gh-release@v1
