@@ -16,12 +16,16 @@ class F1WidgetUpdateWorker(
 
     override suspend fun doWork(): Result {
         return try {
+            Log.d("F1WidgetWorker", "Starting widget update...")
+            
             val apiService = F1ApiService.create()
             val repository = F1Repository(apiService)
             
             val nextRace = repository.getUpcomingRace()
             
             if (nextRace != null) {
+                Log.d("F1WidgetWorker", "Got race data: ${nextRace.raceName}")
+                
                 // Sauvegarder dans SharedPreferences
                 val prefs = applicationContext.getSharedPreferences("F1Widget", Context.MODE_PRIVATE)
                 prefs.edit().apply {
@@ -31,6 +35,7 @@ class F1WidgetUpdateWorker(
                     
                     // Sessions
                     nextRace.firstPractice?.let {
+                        Log.d("F1WidgetWorker", "FP1: ${it.date} ${it.time}")
                         putString("fp1_date", it.date)
                         putString("fp1_time", it.time)
                     } ?: run {
@@ -39,6 +44,7 @@ class F1WidgetUpdateWorker(
                     }
                     
                     nextRace.secondPractice?.let {
+                        Log.d("F1WidgetWorker", "FP2: ${it.date} ${it.time}")
                         putString("fp2_date", it.date)
                         putString("fp2_time", it.time)
                     } ?: run {
@@ -47,6 +53,7 @@ class F1WidgetUpdateWorker(
                     }
                     
                     nextRace.thirdPractice?.let {
+                        Log.d("F1WidgetWorker", "FP3: ${it.date} ${it.time}")
                         putString("fp3_date", it.date)
                         putString("fp3_time", it.time)
                     } ?: run {
@@ -55,6 +62,7 @@ class F1WidgetUpdateWorker(
                     }
                     
                     nextRace.sprint?.let {
+                        Log.d("F1WidgetWorker", "Sprint: ${it.date} ${it.time}")
                         putString("sprint_date", it.date)
                         putString("sprint_time", it.time)
                     } ?: run {
@@ -63,6 +71,7 @@ class F1WidgetUpdateWorker(
                     }
                     
                     nextRace.qualifying?.let {
+                        Log.d("F1WidgetWorker", "Quali: ${it.date} ${it.time}")
                         putString("quali_date", it.date)
                         putString("quali_time", it.time)
                     } ?: run {
@@ -70,6 +79,7 @@ class F1WidgetUpdateWorker(
                         remove("quali_time")
                     }
                     
+                    Log.d("F1WidgetWorker", "Race: ${nextRace.date} ${nextRace.time}")
                     putString("race_date", nextRace.date)
                     putString("race_time", nextRace.time ?: "")
                     
@@ -83,6 +93,8 @@ class F1WidgetUpdateWorker(
                 val widgetComponent = ComponentName(applicationContext, F1Widget::class.java)
                 val appWidgetIds = appWidgetManager.getAppWidgetIds(widgetComponent)
                 
+                Log.d("F1WidgetWorker", "Updating ${appWidgetIds.size} widgets")
+                
                 for (appWidgetId in appWidgetIds) {
                     F1Widget.updateAppWidget(applicationContext, appWidgetManager, appWidgetId)
                 }
@@ -94,7 +106,8 @@ class F1WidgetUpdateWorker(
                 Result.retry()
             }
         } catch (e: Exception) {
-            Log.e("F1WidgetWorker", "Error updating widget: ${e.message}")
+            Log.e("F1WidgetWorker", "Error updating widget: ${e.message}", e)
+            e.printStackTrace()
             Result.retry()
         }
     }
