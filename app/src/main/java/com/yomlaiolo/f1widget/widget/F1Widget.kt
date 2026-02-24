@@ -99,15 +99,21 @@ class F1Widget : AppWidgetProvider() {
             prefs: android.content.SharedPreferences,
             context: Context
         ) {
-            val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-            val displayFormat = SimpleDateFormat("EEE HH:mm", Locale.FRENCH)
+            // L'API retourne les dates au format "2024-03-15" et les heures au format "14:30:00Z"
+            val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault()).apply {
+                timeZone = TimeZone.getTimeZone("UTC")
+            }
+            val displayFormat = SimpleDateFormat("EEE HH:mm", Locale.FRENCH).apply {
+                timeZone = TimeZone.getDefault()
+            }
             
             // FP1
             val fp1Date = prefs.getString("fp1_date", null)
             val fp1Time = prefs.getString("fp1_time", null)
             if (fp1Date != null && fp1Time != null) {
                 try {
-                    val dateTime = dateFormat.parse("$fp1Date$fp1Time")
+                    val dateTimeStr = "${fp1Date}T$fp1Time"
+                    val dateTime = inputFormat.parse(dateTimeStr)
                     val formatted = displayFormat.format(dateTime!!)
                     views.setTextViewText(R.id.fp1_datetime, formatted)
                     views.setViewVisibility(R.id.fp1_container, android.view.View.VISIBLE)
@@ -123,7 +129,8 @@ class F1Widget : AppWidgetProvider() {
             val fp2Time = prefs.getString("fp2_time", null)
             if (fp2Date != null && fp2Time != null) {
                 try {
-                    val dateTime = dateFormat.parse("$fp2Date$fp2Time")
+                    val dateTimeStr = "${fp2Date}T$fp2Time"
+                    val dateTime = inputFormat.parse(dateTimeStr)
                     val formatted = displayFormat.format(dateTime!!)
                     views.setTextViewText(R.id.fp2_datetime, formatted)
                     views.setViewVisibility(R.id.fp2_container, android.view.View.VISIBLE)
@@ -139,7 +146,8 @@ class F1Widget : AppWidgetProvider() {
             val fp3Time = prefs.getString("fp3_time", null)
             if (fp3Date != null && fp3Time != null) {
                 try {
-                    val dateTime = dateFormat.parse("$fp3Date$fp3Time")
+                    val dateTimeStr = "${fp3Date}T$fp3Time"
+                    val dateTime = inputFormat.parse(dateTimeStr)
                     val formatted = displayFormat.format(dateTime!!)
                     views.setTextViewText(R.id.fp3_datetime, formatted)
                     views.setViewVisibility(R.id.fp3_container, android.view.View.VISIBLE)
@@ -155,7 +163,8 @@ class F1Widget : AppWidgetProvider() {
             val sprintTime = prefs.getString("sprint_time", null)
             if (sprintDate != null && sprintTime != null) {
                 try {
-                    val dateTime = dateFormat.parse("$sprintDate$sprintTime")
+                    val dateTimeStr = "${sprintDate}T$sprintTime"
+                    val dateTime = inputFormat.parse(dateTimeStr)
                     val formatted = displayFormat.format(dateTime!!)
                     views.setTextViewText(R.id.sprint_datetime, formatted)
                     views.setViewVisibility(R.id.sprint_container, android.view.View.VISIBLE)
@@ -171,7 +180,8 @@ class F1Widget : AppWidgetProvider() {
             val qualiTime = prefs.getString("quali_time", null)
             if (qualiDate != null && qualiTime != null) {
                 try {
-                    val dateTime = dateFormat.parse("$qualiDate$qualiTime")
+                    val dateTimeStr = "${qualiDate}T$qualiTime"
+                    val dateTime = inputFormat.parse(dateTimeStr)
                     val formatted = displayFormat.format(dateTime!!)
                     views.setTextViewText(R.id.quali_datetime, formatted)
                     views.setViewVisibility(R.id.quali_container, android.view.View.VISIBLE)
@@ -187,7 +197,8 @@ class F1Widget : AppWidgetProvider() {
             val raceTime = prefs.getString("race_time", null)
             if (raceDate != null && raceTime != null) {
                 try {
-                    val dateTime = dateFormat.parse("$raceDate$raceTime")
+                    val dateTimeStr = "${raceDate}T$raceTime"
+                    val dateTime = inputFormat.parse(dateTimeStr)
                     val formatted = displayFormat.format(dateTime!!)
                     views.setTextViewText(R.id.race_datetime, formatted)
                     views.setViewVisibility(R.id.race_container, android.view.View.VISIBLE)
