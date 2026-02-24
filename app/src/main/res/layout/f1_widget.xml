@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingBottom="8dp">
+        android:paddingBottom="12dp">
 
         <!-- Ligne 1: Drapeau + Nom GP + Round -->
         <LinearLayout
@@ -77,190 +77,201 @@
             android:paddingStart="32dp" />
     </LinearLayout>
 
-    <!-- Tracé du circuit -->
-    <FrameLayout
+    <!-- Contenu principal: Circuit à gauche, Sessions à droite -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="#1A1A1A"
-        android:padding="8dp">
+        android:orientation="horizontal"
+        android:baselineAligned="false">
 
-        <ImageView
-            android:id="@+id/circuit_image"
-            android:layout_width="match_parent"
+        <!-- Tracé du circuit (gauche) -->
+        <FrameLayout
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:scaleType="fitCenter"
-            android:contentDescription="Circuit layout" />
-    </FrameLayout>
+            android:layout_weight="1"
+            android:background="#1A1A1A"
+            android:padding="8dp"
+            android:layout_marginEnd="12dp">
 
-    <!-- Sessions de la semaine -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingTop="12dp">
+            <ImageView
+                android:id="@+id/circuit_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter"
+                android:contentDescription="Circuit layout" />
+        </FrameLayout>
 
-        <!-- FP1 -->
+        <!-- Sessions de la semaine (droite) -->
         <LinearLayout
-            android:id="@+id/fp1_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingVertical="4dp"
-            android:visibility="gone">
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center_vertical">
 
-            <TextView
-                android:layout_width="80dp"
+            <!-- FP1 -->
+            <LinearLayout
+                android:id="@+id/fp1_container"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="FP1"
-                android:textColor="#888888"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:orientation="horizontal"
+                android:paddingVertical="3dp"
+                android:visibility="gone">
 
-            <TextView
-                android:id="@+id/fp1_datetime"
-                android:layout_width="0dp"
+                <TextView
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:text="FP1"
+                    android:textColor="#888888"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/fp1_datetime"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Ven 15:30"
+                    android:textColor="#CCCCCC"
+                    android:textSize="11sp" />
+            </LinearLayout>
+
+            <!-- FP2 -->
+            <LinearLayout
+                android:id="@+id/fp2_container"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Ven 15:30"
-                android:textColor="#CCCCCC"
-                android:textSize="12sp" />
-        </LinearLayout>
+                android:orientation="horizontal"
+                android:paddingVertical="3dp"
+                android:visibility="gone">
 
-        <!-- FP2 -->
-        <LinearLayout
-            android:id="@+id/fp2_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingVertical="4dp"
-            android:visibility="gone">
+                <TextView
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:text="FP2"
+                    android:textColor="#888888"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
 
-            <TextView
-                android:layout_width="80dp"
+                <TextView
+                    android:id="@+id/fp2_datetime"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Ven 19:00"
+                    android:textColor="#CCCCCC"
+                    android:textSize="11sp" />
+            </LinearLayout>
+
+            <!-- FP3 -->
+            <LinearLayout
+                android:id="@+id/fp3_container"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="FP2"
-                android:textColor="#888888"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:orientation="horizontal"
+                android:paddingVertical="3dp"
+                android:visibility="gone">
 
-            <TextView
-                android:id="@+id/fp2_datetime"
-                android:layout_width="0dp"
+                <TextView
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:text="FP3"
+                    android:textColor="#888888"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/fp3_datetime"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Sam 14:00"
+                    android:textColor="#CCCCCC"
+                    android:textSize="11sp" />
+            </LinearLayout>
+
+            <!-- Sprint -->
+            <LinearLayout
+                android:id="@+id/sprint_container"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Ven 19:00"
-                android:textColor="#CCCCCC"
-                android:textSize="12sp" />
-        </LinearLayout>
+                android:orientation="horizontal"
+                android:paddingVertical="3dp"
+                android:visibility="gone">
 
-        <!-- FP3 -->
-        <LinearLayout
-            android:id="@+id/fp3_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingVertical="4dp"
-            android:visibility="gone">
+                <TextView
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:text="SPRINT"
+                    android:textColor="#FF6600"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
 
-            <TextView
-                android:layout_width="80dp"
+                <TextView
+                    android:id="@+id/sprint_datetime"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Sam 16:30"
+                    android:textColor="#CCCCCC"
+                    android:textSize="11sp" />
+            </LinearLayout>
+
+            <!-- Qualifying -->
+            <LinearLayout
+                android:id="@+id/quali_container"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="FP3"
-                android:textColor="#888888"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:orientation="horizontal"
+                android:paddingVertical="3dp"
+                android:visibility="gone">
 
-            <TextView
-                android:id="@+id/fp3_datetime"
-                android:layout_width="0dp"
+                <TextView
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:text="QUALIFS"
+                    android:textColor="#FFD700"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/quali_datetime"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Sam 17:00"
+                    android:textColor="#CCCCCC"
+                    android:textSize="11sp" />
+            </LinearLayout>
+
+            <!-- Race -->
+            <LinearLayout
+                android:id="@+id/race_container"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Sam 14:00"
-                android:textColor="#CCCCCC"
-                android:textSize="12sp" />
-        </LinearLayout>
+                android:orientation="horizontal"
+                android:paddingVertical="3dp"
+                android:visibility="gone">
 
-        <!-- Sprint -->
-        <LinearLayout
-            android:id="@+id/sprint_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingVertical="4dp"
-            android:visibility="gone">
+                <TextView
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:text="COURSE"
+                    android:textColor="#E10600"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
 
-            <TextView
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:text="SPRINT"
-                android:textColor="#FF6600"
-                android:textSize="12sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/sprint_datetime"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Sam 16:30"
-                android:textColor="#CCCCCC"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-        <!-- Qualifying -->
-        <LinearLayout
-            android:id="@+id/quali_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingVertical="4dp"
-            android:visibility="gone">
-
-            <TextView
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:text="QUALIFS"
-                android:textColor="#FFD700"
-                android:textSize="12sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/quali_datetime"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Sam 17:00"
-                android:textColor="#CCCCCC"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-        <!-- Race -->
-        <LinearLayout
-            android:id="@+id/race_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingVertical="4dp"
-            android:visibility="gone">
-
-            <TextView
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:text="COURSE"
-                android:textColor="#E10600"
-                android:textSize="12sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/race_datetime"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Dim 15:00"
-                android:textColor="#FFFFFF"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/race_datetime"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Dim 15:00"
+                    android:textColor="#FFFFFF"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 
