@@ -3,6 +3,7 @@ package com.yomlaiolo.f1widget.widget
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
+import android.util.Log
 import android.widget.RemoteViews
 import androidx.work.*
 import com.yomlaiolo.f1widget.R
@@ -17,6 +18,11 @@ class F1Widget : AppWidgetProvider() {
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray
     ) {
+        Log.d("F1Widget", "onUpdate called for ${appWidgetIds.size} widgets")
+        
+        // Déclencher une mise à jour immédiate
+        triggerImmediateUpdate(context)
+        
         for (appWidgetId in appWidgetIds) {
             updateAppWidget(context, appWidgetManager, appWidgetId)
         }
@@ -27,12 +33,31 @@ class F1Widget : AppWidgetProvider() {
 
     override fun onEnabled(context: Context) {
         super.onEnabled(context)
+        Log.d("F1Widget", "Widget enabled - triggering immediate update")
+        triggerImmediateUpdate(context)
         scheduleWidgetUpdate(context)
     }
 
     override fun onDisabled(context: Context) {
         super.onDisabled(context)
         WorkManager.getInstance(context).cancelUniqueWork(WORK_NAME)
+        WorkManager.getInstance(context).cancelUniqueWork(IMMEDIATE_WORK_NAME)
+    }
+
+    private fun triggerImmediateUpdate(context: Context) {
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
+        val immediateRequest = OneTimeWorkRequestBuilder<F1WidgetUpdateWorker>()
+            .setConstraints(constraints)
+            .build()
+
+        WorkManager.getInstance(context).enqueueUniqueWork(
+            IMMEDIATE_WORK_NAME,
+            ExistingWorkPolicy.REPLACE,
+            immediateRequest
+        )
     }
 
     private fun scheduleWidgetUpdate(context: Context) {
@@ -55,6 +80,7 @@ class F1Widget : AppWidgetProvider() {
 
     companion object {
         private const val WORK_NAME = "F1WidgetUpdate"
+        private const val IMMEDIATE_WORK_NAME = "F1WidgetImmediateUpdate"
 
         fun updateAppWidget(
             context: Context,
@@ -69,6 +95,8 @@ class F1Widget : AppWidgetProvider() {
             val raceName = prefs.getString("race_name", "Loading...") ?: "Loading..."
             val round = prefs.getString("race_round", "") ?: ""
             val circuitId = prefs.getString("circuit_id", "") ?: ""
+            
+            Log.d("F1Widget", "Updating widget with race: $raceName, round: $round")
             
             views.setTextViewText(R.id.race_name, raceName)
             views.setTextViewText(R.id.race_round, "Round $round")
@@ -113,11 +141,14 @@ class F1Widget : AppWidgetProvider() {
             if (fp1Date != null && fp1Time != null) {
                 try {
                     val dateTimeStr = "${fp1Date}T$fp1Time"
+                    Log.d("F1Widget", "Parsing FP1: $dateTimeStr")
                     val dateTime = inputFormat.parse(dateTimeStr)
                     val formatted = displayFormat.format(dateTime!!)
                     views.setTextViewText(R.id.fp1_datetime, formatted)
                     views.setViewVisibility(R.id.fp1_container, android.view.View.VISIBLE)
+                    Log.d("F1Widget", "FP1 displayed: $formatted")
                 } catch (e: Exception) {
+                    Log.e("F1Widget", "Error parsing FP1: ${e.message}")
                     views.setViewVisibility(R.id.fp1_container, android.view.View.GONE)
                 }
             } else {
@@ -134,7 +165,9 @@ class F1Widget : AppWidgetProvider() {
                     val formatted = displayFormat.format(dateTime!!)
                     views.setTextViewText(R.id.fp2_datetime, formatted)
                     views.setViewVisibility(R.id.fp2_container, android.view.View.VISIBLE)
+                    Log.d("F1Widget", "FP2 displayed: $formatted")
                 } catch (e: Exception) {
+                    Log.e("F1Widget", "Error parsing FP2: ${e.message}")
                     views.setViewVisibility(R.id.fp2_container, android.view.View.GONE)
                 }
             } else {
@@ -151,7 +184,9 @@ class F1Widget : AppWidgetProvider() {
                     val formatted = displayFormat.format(dateTime!!)
                     views.setTextViewText(R.id.fp3_datetime, formatted)
                     views.setViewVisibility(R.id.fp3_container, android.view.View.VISIBLE)
+                    Log.d("F1Widget", "FP3 displayed: $formatted")
                 } catch (e: Exception) {
+                    Log.e("F1Widget", "Error parsing FP3: ${e.message}")
                     views.setViewVisibility(R.id.fp3_container, android.view.View.GONE)
                 }
             } else {
@@ -168,7 +203,9 @@ class F1Widget : AppWidgetProvider() {
                     val formatted = displayFormat.format(dateTime!!)
                     views.setTextViewText(R.id.sprint_datetime, formatted)
                     views.setViewVisibility(R.id.sprint_container, android.view.View.VISIBLE)
+                    Log.d("F1Widget", "Sprint displayed: $formatted")
                 } catch (e: Exception) {
+                    Log.e("F1Widget", "Error parsing Sprint: ${e.message}")
                     views.setViewVisibility(R.id.sprint_container, android.view.View.GONE)
                 }
             } else {
@@ -185,7 +222,9 @@ class F1Widget : AppWidgetProvider() {
                     val formatted = displayFormat.format(dateTime!!)
                     views.setTextViewText(R.id.quali_datetime, formatted)
                     views.setViewVisibility(R.id.quali_container, android.view.View.VISIBLE)
+                    Log.d("F1Widget", "Quali displayed: $formatted")
                 } catch (e: Exception) {
+                    Log.e("F1Widget", "Error parsing Quali: ${e.message}")
                     views.setViewVisibility(R.id.quali_container, android.view.View.GONE)
                 }
             } else {
@@ -202,7 +241,9 @@ class F1Widget : AppWidgetProvider() {
                     val formatted = displayFormat.format(dateTime!!)
                     views.setTextViewText(R.id.race_datetime, formatted)
                     views.setViewVisibility(R.id.race_container, android.view.View.VISIBLE)
+                    Log.d("F1Widget", "Race displayed: $formatted")
                 } catch (e: Exception) {
+                    Log.e("F1Widget", "Error parsing Race: ${e.message}")
                     views.setViewVisibility(R.id.race_container, android.view.View.GONE)
                 }
             } else {
