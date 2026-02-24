@@ -1,0 +1,79 @@
+name: Create Release APK
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number (e.g., 1.0.0)'
+        required: true
+        default: '1.0.0'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+        cache: 'gradle'
+    
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+    
+    - name: Build release APK
+      run: ./gradlew assembleRelease --stacktrace
+    
+    - name: Sign APK (if keystore available)
+      if: env.KEYSTORE_FILE != ''
+      env:
+        KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+        KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+        KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+        KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+      run: |
+        echo "Signing APK..."
+        # Add signing logic here if needed
+    
+    - name: Rename APK
+      run: |
+        VERSION=${{ github.event.inputs.version || github.ref_name }}
+        mv app/build/outputs/apk/release/app-release-unsigned.apk f1-widget-${VERSION}.apk || \
+        mv app/build/outputs/apk/release/app-release.apk f1-widget-${VERSION}.apk
+    
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: f1-widget-*.apk
+        body: |
+          ## 🏎️ F1 Widget Android - Release ${{ github.event.inputs.version || github.ref_name }}
+          
+          ### 📱 Installation
+          1. Télécharge le fichier APK ci-dessous
+          2. Active "Sources inconnues" dans les paramètres Android
+          3. Installe l'APK
+          4. Ajoute le widget à ton écran d'accueil
+          
+          ### ⚠️ Note
+          Cette version est **unsigned** (non signée). Pour une utilisation en production, signe l'APK avec ta propre clé.
+          
+          ### 📝 Changements
+          - Widget F1 avec tracé des circuits
+          - Affichage des horaires de toutes les sessions
+          - Mise à jour automatique via API Jolpica F1
+          
+          ---
+          
+          **Besoin d'aide ?** Consulte le [README](https://github.com/yomlaiolo/f1-widget-android/blob/main/README.md)
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
