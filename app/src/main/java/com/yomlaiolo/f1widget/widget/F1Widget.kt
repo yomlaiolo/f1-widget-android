@@ -201,22 +201,28 @@ class F1Widget : AppWidgetProvider() {
 
         private fun getCircuitDrawable(context: Context, circuitId: String): Int {
             // Mapper les IDs de circuits aux ressources drawable
-            val resourceId = context.resources.getIdentifier(
+            // D'abord essayer avec l'ID exact du circuit
+            var resourceId = context.resources.getIdentifier(
                 "circuit_$circuitId",
                 "drawable",
                 context.packageName
             )
             
-            return if (resourceId != 0) {
-                resourceId
-            } else {
-                // Image par défaut si le circuit n'est pas trouvé
-                context.resources.getIdentifier(
+            // Si pas trouvé, essayer avec l'image par défaut
+            if (resourceId == 0) {
+                resourceId = context.resources.getIdentifier(
                     "circuit_default",
                     "drawable",
                     context.packageName
                 )
             }
+            
+            // Si toujours pas trouvé (ne devrait jamais arriver), utiliser l'icône de l'app
+            if (resourceId == 0) {
+                resourceId = R.mipmap.ic_launcher
+            }
+            
+            return resourceId
         }
     }
 }
