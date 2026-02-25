@@ -1,6 +1,7 @@
 package com.yomlaiolo.f1widget.data
 
 import com.yomlaiolo.f1widget.data.models.RaceResponse
+import com.yomlaiolo.f1widget.data.models.StandingsResponse
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -16,6 +17,12 @@ interface F1ApiService {
     
     @GET("current/next.json")
     suspend fun getNextRace(): Response<RaceResponse>
+    
+    @GET("current/driverStandings.json")
+    suspend fun getDriverStandings(): Response<StandingsResponse>
+    
+    @GET("current/constructorStandings.json")
+    suspend fun getConstructorStandings(): Response<StandingsResponse>
     
     companion object {
         private const val BASE_URL = "http://api.jolpi.ca/ergast/f1/"
