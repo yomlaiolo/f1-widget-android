@@ -1,214 +1,215 @@
 # F1 Widget Android 🏎️
 
-Widget Android natif en Kotlin affichant le tracé du circuit et les horaires de toutes les sessions du prochain Grand Prix de Formule 1.
+Application Android avec widget pour suivre la Formule 1 - prochains Grands Prix, classements pilotes et constructeurs, calendrier complet de la saison.
 
-## 🎯 Fonctionnalités
+## Fonctionnalités ✨
 
-- 🗺️ **Tracé du circuit** : Affichage visuel du prochain circuit
-- 📅 **Horaires complets** : FP1, FP2, FP3, Qualifications, Sprint (si applicable) et Course
-- 🔄 **Mise à jour automatique** : Refresh toutes les heures via WorkManager
-- 🌐 **API gratuite** : Utilise l'API Jolpica F1 (successeur d'Ergast)
-- 🎨 **Design moderne** : Interface sombre avec couleurs F1 officielles
-- 🛑 **Fallback robuste** : Image par défaut si le circuit n'est pas trouvé
+### Widget Android
+- **Widget sur l'écran d'accueil** affichant les informations du prochain Grand Prix
+- Mise à jour automatique toutes les 6 heures
+- Design moderne avec drapeau du pays et dates du weekend
+- Affichage des sessions (FP1, FP2, FP3, Sprint, Qualifications, Course)
+- Images des circuits téléchargées depuis le CDN officiel Formula 1
 
-## 📦 Technologies utilisées
+### Application Complète
 
-- **Kotlin** : Langage principal
-- **Android Widgets API** : RemoteViews pour le widget
+#### 📱 Page d'Accueil
+- Carte détaillée du prochain Grand Prix
+  - Nom de la course et du circuit
+  - Drapeau du pays
+  - Round actuel / total
+  - Dates du weekend
+  - Toutes les sessions avec dates et heures
+- Aperçu du classement pilotes (Top 5)
+- Aperçu du classement constructeurs (Top 5)
+- Interface scrollable pour voir toutes les informations
+
+#### 🏆 Page Classements
+- Onglet **Pilotes** : Classement complet avec
+  - Position et badge coloré (or/argent/bronze pour le podium)
+  - Nom du pilote
+  - Équipe avec couleur distinctive
+  - Points
+- Onglet **Constructeurs** : Classement des équipes
+  - Position et badge coloré
+  - Nom de l'équipe avec couleur
+  - Points
+
+#### 📅 Page Calendrier
+- Liste complète de tous les Grands Prix de la saison
+- Pour chaque course :
+  - Numéro du round
+  - Drapeau du pays
+  - Nom du Grand Prix
+  - Circuit
+  - Date
+- Indication visuelle des courses passées (grisées)
+- Mise en évidence du prochain GP
+
+## Architecture Technique 🏗️
+
+### Technologies
+- **Kotlin** : Langage de programmation
+- **Jetpack Compose** : UI moderne et déclarative
+- **Material Design 3** : Design system Google
+- **Navigation Component** : Navigation entre écrans
+- **ViewModel** : Gestion de l'état
+- **Coroutines & Flow** : Programmation asynchrone
 - **Retrofit** : Appels API REST
-- **WorkManager** : Mises à jour en arrière-plan
-- **Coroutines** : Programmation asynchrone
-- **Jolpica F1 API** : Données de calendrier F1
+- **WorkManager** : Tâches en arrière-plan
+- **Coil** : Chargement d'images
 
-## 📱 Installation rapide (APK prêt à l'emploi)
+### Sources de Données
+- **API Ergast F1** : Données de course, classements, calendrier
+  - `http://api.jolpi.ca/ergast/f1/`
+- **Formula 1 CDN** : Images officielles des circuits
+  - `https://media.formula1.com/`
 
-### Option 1 : Télécharger l'APK depuis GitHub Actions
-
-1. Va sur l'onglet [**Actions**](https://github.com/yomlaiolo/f1-widget-android/actions)
-2. Clique sur le dernier workflow **"Build Android APK"** qui a réussi (✅)
-3. Scroll en bas jusqu'à la section **"Artifacts"**
-4. Télécharge **"f1-widget-debug"**
-5. Extrait le ZIP et installe l'APK sur ton téléphone
-
-### Option 2 : Télécharger depuis Releases
-
-1. Va sur l'onglet [**Releases**](https://github.com/yomlaiolo/f1-widget-android/releases)
-2. Télécharge le fichier `.apk` de la dernière version
-3. Installe sur ton téléphone
-
-### 📲 Installation sur Android
-
-1. **Active "Sources inconnues"** :
-   - Paramètres > Sécurité > Installer des applications inconnues
-   - Autorise ton gestionnaire de fichiers
-
-2. **Installe l'APK** :
-   - Ouvre le fichier APK
-   - Clique sur "Installer"
-   - Attends la fin de l'installation
-
-3. **Ajoute le widget** :
-   - Long press sur l'écran d'accueil
-   - Sélectionne "Widgets"
-   - Trouve "F1 Widget" et glisse-le sur l'écran
-   - Le widget va automatiquement charger le prochain GP
-
-## 🛠️ Développement local
-
-### Prérequis
-
-- Android Studio Hedgehog | 2023.1.1 ou supérieur
-- JDK 17
-- Android SDK 26+ (Android 8.0)
-- Gradle 8.2
-
-### Étapes
-
-1. Clone le repository :
-```bash
-git clone https://github.com/yomlaiolo/f1-widget-android.git
-cd f1-widget-android
-```
-
-2. Ouvre le projet dans Android Studio
-
-3. Laisse Gradle se synchroniser
-
-4. Build et lance l'app :
-```bash
-./gradlew assembleDebug
-# ou directement depuis Android Studio
-```
-
-5. L'APK sera générée dans :
-```
-app/build/outputs/apk/debug/app-debug.apk
-```
-
-## 📱 Utilisation
-
-Une fois le widget ajouté :
-- ✅ Il affichera automatiquement le prochain Grand Prix
-- ✅ Le tracé du circuit sera visible (ou placeholder si image non disponible)
-- ✅ Tous les horaires des sessions seront listés (en heure locale)
-- ✅ Mise à jour automatique toutes les heures
-- ✅ Fonctionne hors ligne avec les dernières données en cache
-
-## 📁 Structure du projet
+### Structure du Projet
 
 ```
-app/src/main/
-├── java/com/yomlaiolo/f1widget/
-│   ├── widget/
-│   │   ├── F1Widget.kt                    # Widget provider principal
-│   │   └── F1WidgetUpdateWorker.kt        # Background updates
-│   ├── data/
-│   │   ├── F1ApiService.kt                # Interface Retrofit
-│   │   ├── models/                        # Modèles de données
-│   │   └── repository/
-│   │       └── F1Repository.kt            # Logique de récupération
-├── res/
-│   ├── layout/
-│   │   └── f1_widget.xml                  # Layout du widget
-│   ├── xml/
-│   │   └── f1_widget_info.xml             # Métadonnées widget
-│   └── drawable/
-│       ├── circuit_default.xml            # Placeholder par défaut
-│       └── circuits/                       # Images des circuits (optionnel)
-└── AndroidManifest.xml
+app/src/main/java/com/yomlaiolo/f1widget/
+├── data/
+│   ├── models/          # Modèles de données (Race, Standing, etc.)
+│   ├── repository/      # Repository pour accès aux données
+│   └── F1ApiService.kt  # Interface Retrofit
+├── ui/
+│   ├── screens/         # Écrans Compose (Home, Standings, Calendar)
+│   ├── components/      # Composants réutilisables
+│   ├── navigation/      # Configuration navigation
+│   └── MainViewModel.kt # ViewModel principal
+├── utils/
+│   ├── CountryFlags.kt        # Drapeaux par pays
+│   ├── TeamColors.kt          # Couleurs des équipes F1
+│   ├── DateFormatter.kt       # Formatage dates
+│   └── CircuitImageManager.kt # Gestion images circuits
+├── widget/
+│   ├── F1Widget.kt            # Widget principal
+│   └── F1WidgetUpdateWorker.kt # Worker mise à jour
+└── MainActivity.kt      # Point d'entrée app
 ```
 
-## 🏎️ API Utilisée
+## Modèles de Données 📊
 
-**Jolpica F1 API** (gratuite)
-- Base URL : `http://api.jolpi.ca/ergast/f1/`
-- Endpoint calendrier : `/current.json` ou `/{year}.json`
-- Endpoint prochain GP : `/current/next.json`
-- Compatible avec l'ancien format Ergast
-- ✅ Pas d'authentification requise
-- ✅ Pas de limite de requêtes
-
-## ⚙️ Configuration
-
-Le widget se configure automatiquement. Pour personnaliser :
-
-### 1. Fréquence de mise à jour
-
-Modifie dans `F1Widget.kt` :
+### Race (Grand Prix)
 ```kotlin
-val updateRequest = PeriodicWorkRequestBuilder<F1WidgetUpdateWorker>(
-    1, TimeUnit.HOURS  // Change ici (ex: 30, TimeUnit.MINUTES)
+data class Race(
+    val round: String,
+    val raceName: String,
+    val circuit: Circuit,
+    val date: String,
+    val time: String?,
+    val firstPractice: Session?,
+    val secondPractice: Session?,
+    val thirdPractice: Session?,
+    val qualifying: Session?,
+    val sprint: Session?
 )
 ```
 
-### 2. Ajouter des images de circuits personnalisées
-
-Consulte le guide complet : [docs/CIRCUITS.md](docs/CIRCUITS.md)
-
-Résumé rapide :
-1. Télécharge les tracés depuis [Wikipedia Commons](https://commons.wikimedia.org/wiki/Category:Formula_One_circuit_maps)
-2. Place-les dans `app/src/main/res/drawable/`
-3. Nomme-les : `circuit_monaco.png`, `circuit_silverstone.png`, etc.
-
-### 3. Couleurs et thème
-
-Modifie `f1_widget.xml` et `widget_background.xml`
-
-## 🚀 Builds automatiques (CI/CD)
-
-Le projet utilise GitHub Actions pour :
-- ✅ Build automatique sur chaque push
-- ✅ APK disponible dans les Artifacts
-- ✅ Création de releases avec APK attachée
-
-Pour créer une release :
-```bash
-git tag v1.0.0
-git push origin v1.0.0
+### DriverStanding (Classement Pilote)
+```kotlin
+data class DriverStanding(
+    val position: String,
+    val points: String,
+    val wins: String,
+    val driver: Driver,
+    val constructors: List<Constructor>
+)
 ```
 
-Ou manuellement depuis l'onglet Actions > "Create Release APK" > Run workflow
+### ConstructorStanding (Classement Constructeur)
+```kotlin
+data class ConstructorStanding(
+    val position: String,
+    val points: String,
+    val wins: String,
+    val constructor: Constructor
+)
+```
 
-## 🚀 Améliorations futures
+## Configuration Requise 📋
 
-- [ ] Configuration du widget (choix du GP ou pilote favori)
-- [ ] Click actions (ouvrir app avec détails complets)
-- [ ] Notifications 1h avant chaque session
-- [ ] Thèmes personnalisables (couleurs d'équipes)
-- [ ] Multiple tailles de widget (petit, moyen, grand)
-- [ ] Mode sombre/clair manuel
-- [ ] Support pour historique des courses
-- [ ] Widget pour le classement des pilotes/constructeurs
-- [ ] Intégration OpenF1 pour données live pendant les courses
+- **Min SDK** : 26 (Android 8.0 Oreo)
+- **Target SDK** : 34 (Android 14)
+- **Kotlin** : 1.9.x
+- **Gradle** : 8.x
+- **JDK** : 17
 
-## 🐛 Debugging
+## Permissions 🔐
 
-Si le widget ne se met pas à jour :
+```xml
+<uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+```
 
-1. **Vérifie la connexion internet**
-2. **Force un refresh** : Retire et re-ajoute le widget
-3. **Logs** : Utilise `adb logcat | grep F1Widget`
-4. **Vérifie WorkManager** : Ouvre les paramètres Android > Apps > F1 Widget > Utilisation de la batterie
+## Installation 🚀
 
-## 📝 Licence
+1. **Cloner le repository**
+   ```bash
+   git clone https://github.com/yomlaiolo/f1-widget-android.git
+   cd f1-widget-android
+   ```
 
-MIT License - Libre d'utilisation et modification
+2. **Ouvrir dans Android Studio**
+   - Android Studio Hedgehog (2023.1.1) ou supérieur recommandé
 
-## 👤 Auteur
+3. **Sync Gradle**
+   - Laisser Android Studio télécharger les dépendances
 
-**Tom Laiolo** - [@yomlaiolo](https://github.com/yomlaiolo)
+4. **Compiler et installer**
+   - Connecter un appareil Android ou lancer un émulateur
+   - Cliquer sur "Run" ou `Shift + F10`
 
-🏛️ Epitech Toulouse
+## Utilisation 📱
 
-## 👏 Remerciements
+### Ajouter le Widget
+1. Long press sur l'écran d'accueil Android
+2. Sélectionner "Widgets"
+3. Trouver "F1 Widget"
+4. Glisser-déposer sur l'écran d'accueil
+5. Le widget se met à jour automatiquement toutes les 6 heures
 
-- [Jolpica F1 API](http://api.jolpi.ca/ergast/f1/) pour les données
-- [Ergast Developer API](http://ergast.com/mrd/) pour le format original
-- [OpenF1](https://openf1.org/) pour l'inspiration
-- Communauté F1 pour la passion du sport
+### Utiliser l'Application
+1. Lancer l'app depuis le launcher
+2. **Accueil** : Voir les infos du prochain GP + aperçu classements
+3. **Classements** : Voir les classements complets pilotes et constructeurs
+4. **Calendrier** : Explorer tous les GP de la saison
+5. Tirer pour rafraîchir les données
+
+## Roadmap 🗺️
+
+### Version actuelle (1.0)
+- ✅ Widget avec infos du prochain GP
+- ✅ Application avec 3 écrans
+- ✅ Classements pilotes et constructeurs
+- ✅ Calendrier de la saison
+- ✅ Images des circuits
+
+### Prochaines versions
+- 🔄 Support des notifications avant les courses
+- 🔄 Détails par Grand Prix (météo, historique)
+- 🔄 Support multi-langue
+- 🔄 Thème clair/sombre personnalisé
+- 🔄 Widget redimensionnable
+- 🔄 Résultats en temps réel pendant les courses
+
+## Crédits 🙏
+
+- **Données** : [Ergast Developer API](http://ergast.com/mrd/)
+- **Images** : Formula 1 Official CDN
+- **Design** : Material Design 3
+
+## Licence 📄
+
+Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
+
+## Contact 📧
+
+Pour toute question ou suggestion :
+- GitHub Issues : [Issues](https://github.com/yomlaiolo/f1-widget-android/issues)
+- Email : [Contact](mailto:91747577+yomlaiolo@users.noreply.github.com)
 
 ---
 
-**Note** : Ce widget est un projet indépendant et n'est pas affilié à Formula 1, FIA ou Liberty Media.
-
-🏎️ **Enjoy your F1 Widget!**
+**Note** : Cette application n'est pas officiellement affiliée à la Formule 1, à la FIA ou à Liberty Media. Toutes les marques et logos appartiennent à leurs propriétaires respectifs.
