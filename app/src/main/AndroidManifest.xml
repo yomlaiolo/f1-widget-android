@@ -13,6 +13,17 @@
         android:theme="@style/Theme.AppCompat.DayNight"
         android:networkSecurityConfig="@xml/network_security_config">
 
+        <!-- Main Activity -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:theme="@android:style/Theme.Material.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
         <!-- Widget Receiver -->
         <receiver
             android:name=".widget.F1Widget"
