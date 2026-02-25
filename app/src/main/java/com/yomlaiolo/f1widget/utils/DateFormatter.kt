@@ -59,4 +59,61 @@ object DateFormatter {
             ""
         }
     }
+    
+    /**
+     * Formate une date de session
+     * Ex: "Ven 08 mars"
+     */
+    fun formatSessionDate(date: String): String {
+        return try {
+            val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val displayFormat = SimpleDateFormat("EEE dd MMM", Locale.FRENCH)
+            
+            val parsedDate = inputFormat.parse(date)
+            displayFormat.format(parsedDate!!)
+        } catch (e: Exception) {
+            date
+        }
+    }
+    
+    /**
+     * Formate une heure
+     * Ex: "15:30"
+     */
+    fun formatTime(time: String): String {
+        return try {
+            if (time.contains("Z")) {
+                // Format UTC complet
+                val inputFormat = SimpleDateFormat("HH:mm:ss'Z'", Locale.getDefault()).apply {
+                    timeZone = TimeZone.getTimeZone("UTC")
+                }
+                val displayFormat = SimpleDateFormat("HH:mm", Locale.getDefault()).apply {
+                    timeZone = TimeZone.getDefault()
+                }
+                val parsedTime = inputFormat.parse(time)
+                displayFormat.format(parsedTime!!)
+            } else {
+                // Déjà au bon format
+                time.substring(0, 5)
+            }
+        } catch (e: Exception) {
+            time
+        }
+    }
+    
+    /**
+     * Formate une date de course complète
+     * Ex: "08 mars 2024"
+     */
+    fun formatRaceDate(date: String): String {
+        return try {
+            val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val displayFormat = SimpleDateFormat("dd MMMM yyyy", Locale.FRENCH)
+            
+            val parsedDate = inputFormat.parse(date)
+            displayFormat.format(parsedDate!!)
+        } catch (e: Exception) {
+            date
+        }
+    }
 }
