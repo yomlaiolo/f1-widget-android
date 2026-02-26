@@ -8,7 +8,6 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.yomlaiolo.f1widget.data.F1ApiService
 import com.yomlaiolo.f1widget.data.repository.F1Repository
-import com.yomlaiolo.f1widget.utils.CircuitImageManager
 import com.yomlaiolo.f1widget.utils.CountryFlags
 import com.yomlaiolo.f1widget.utils.DateFormatter
 
@@ -51,17 +50,9 @@ class F1WidgetUpdateWorker(
                 // Récupérer le drapeau du pays
                 val countryFlag = CountryFlags.getFlag(nextRace.circuit.location.country)
                 
-                // Télécharger l'image du circuit
-                val circuitId = nextRace.circuit.circuitId
-                Log.d("F1WidgetWorker", "Downloading circuit image for: $circuitId")
-                val circuitBitmap = CircuitImageManager.getCircuitImage(applicationContext, circuitId)
-                
-                if (circuitBitmap != null) {
-                    Log.d("F1WidgetWorker", "Circuit image loaded successfully: $circuitId")
-                } else {
-                    Log.w("F1WidgetWorker", "Failed to load circuit image: $circuitId")
-                }
-                
+                // L'image du circuit est chargée localement depuis res/drawable/
+                // par F1Widget.getCircuitDrawable() — pas de téléchargement nécessaire
+
                 // Sauvegarder dans SharedPreferences
                 val prefs = applicationContext.getSharedPreferences("F1Widget", Context.MODE_PRIVATE)
                 prefs.edit().apply {

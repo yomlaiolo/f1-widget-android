@@ -2,162 +2,99 @@
 
 ## 🗃️ Images nécessaires
 
-Pour que le widget affiche correctement les tracés des circuits, tu dois ajouter les images suivantes dans le dossier `app/src/main/res/drawable/` :
+Les images des circuits sont stockées **localement** dans le projet en tant que Vector Drawables (SVG convertis en XML Android).
+
+Dossier : `app/src/main/res/drawable/`
 
 ### Liste complète des circuits 2026
 
-1. `circuit_bahrain.png` - Bahrain International Circuit
-2. `circuit_jeddah.png` - Jeddah Corniche Circuit
-3. `circuit_albert_park.png` - Albert Park Circuit (Australie)
-4. `circuit_shanghai.png` - Shanghai International Circuit
-5. `circuit_miami.png` - Miami International Autodrome
-6. `circuit_imola.png` - Autodromo Enzo e Dino Ferrari
-7. `circuit_monaco.png` - Circuit de Monaco
-8. `circuit_villeneuve.png` - Circuit Gilles Villeneuve (Canada)
-9. `circuit_red_bull_ring.png` - Red Bull Ring (Autriche)
-10. `circuit_silverstone.png` - Silverstone Circuit
-11. `circuit_hungaroring.png` - Hungaroring
-12. `circuit_spa.png` - Circuit de Spa-Francorchamps
-13. `circuit_zandvoort.png` - Circuit Zandvoort
-14. `circuit_monza.png` - Autodromo Nazionale di Monza
-15. `circuit_baku.png` - Baku City Circuit
-16. `circuit_marina_bay.png` - Marina Bay Street Circuit (Singapour)
-17. `circuit_suzuka.png` - Suzuka International Racing Course
-18. `circuit_americas.png` - Circuit of the Americas (Austin)
-19. `circuit_rodriguez.png` - Autódromo Hermanos Rodríguez (Mexico)
-20. `circuit_interlagos.png` - Autódromo José Carlos Pace (Brésil)
-21. `circuit_vegas.png` - Las Vegas Street Circuit
-22. `circuit_losail.png` - Losail International Circuit (Qatar)
-23. `circuit_yas_marina.png` - Yas Marina Circuit (Abu Dhabi)
-24. `circuit_default.png` - Image par défaut (fallback)
+| # | Circuit ID (API) | Nom du fichier | Circuit |
+|---|---|---|---|
+| 1 | `bahrain` | `circuit_bahrain.xml` | Bahrain International Circuit |
+| 2 | `jeddah` | `circuit_jeddah.xml` | Jeddah Corniche Circuit |
+| 3 | `albert_park` | `circuit_albert_park.xml` | Albert Park Circuit (Australie) |
+| 4 | `suzuka` | `circuit_suzuka.xml` | Suzuka International Racing Course |
+| 5 | `shanghai` | `circuit_shanghai.xml` | Shanghai International Circuit |
+| 6 | `miami` | `circuit_miami.xml` | Miami International Autodrome |
+| 7 | `imola` | `circuit_imola.xml` | Autodromo Enzo e Dino Ferrari |
+| 8 | `monaco` | `circuit_monaco.xml` | Circuit de Monaco |
+| 9 | `villeneuve` | `circuit_villeneuve.xml` | Circuit Gilles Villeneuve (Canada) |
+| 10 | `catalunya` | `circuit_catalunya.xml` | Circuit de Barcelona-Catalunya |
+| 11 | `red_bull_ring` | `circuit_red_bull_ring.xml` | Red Bull Ring (Autriche) |
+| 12 | `silverstone` | `circuit_silverstone.xml` | Silverstone Circuit |
+| 13 | `hungaroring` | `circuit_hungaroring.xml` | Hungaroring |
+| 14 | `spa` | `circuit_spa.xml` | Circuit de Spa-Francorchamps |
+| 15 | `zandvoort` | `circuit_zandvoort.xml` | Circuit Zandvoort |
+| 16 | `monza` | `circuit_monza.xml` | Autodromo Nazionale di Monza |
+| 17 | `baku` | `circuit_baku.xml` | Baku City Circuit |
+| 18 | `marina_bay` | `circuit_marina_bay.xml` | Marina Bay Street Circuit (Singapour) |
+| 19 | `americas` | `circuit_americas.xml` | Circuit of the Americas (Austin) |
+| 20 | `rodriguez` | `circuit_rodriguez.xml` | Autódromo Hermanos Rodríguez (Mexico) |
+| 21 | `interlagos` | `circuit_interlagos.xml` | Autódromo José Carlos Pace (Brésil) |
+| 22 | `vegas` | `circuit_vegas.xml` | Las Vegas Street Circuit |
+| 23 | `losail` | `circuit_losail.xml` | Losail International Circuit (Qatar) |
+| 24 | `yas_marina` | `circuit_yas_marina.xml` | Yas Marina Circuit (Abu Dhabi) |
+| 25 | `madrid` | `circuit_madrid.xml` | Circuit de Madrid |
+| — | — | `circuit_default.xml` | Image par défaut (fallback) |
 
-## 💾 Où trouver les images
+## 💾 Comment ajouter un circuit
 
-### Option 1 : Wikipedia Commons (Recommandée) ✅
+### Étape 1 : Obtenir le SVG
 
-Les images de haute qualité sont disponibles sur Wikipedia Commons :
+Télécharge le SVG du tracé du circuit depuis :
+- **Wikipedia Commons** : https://commons.wikimedia.org/wiki/Category:Formula_One_circuit_maps
+- **F1 Sketch** : https://f1sketch.com/
 
-1. Va sur https://commons.wikimedia.org/wiki/Category:Formula_One_circuit_maps
-2. Cherche le circuit spécifique
-3. Télécharge l'image SVG ou PNG
-4. Si c'est un SVG, convertis-le en PNG
+### Étape 2 : Convertir en Vector Drawable
 
-### Option 2 : Sites spécialisés
+#### Option A : Android Studio (recommandé)
+1. Clic droit sur `res/drawable/` → **New** → **Vector Asset**
+2. Sélectionne **Local file (SVG, PSD)**
+3. Choisis ton fichier SVG
+4. Nomme-le `circuit_{circuitId}` (ex: `circuit_monaco`)
+5. Clique **Next** → **Finish**
 
-- **F1 Sketch** : https://f1sketch.com (tracés minimalistes)
-- **RacingCircuits.info** : Base de données complète
-- **Official F1 Media** : Images officielles (vérifie la licence)
+#### Option B : Outil en ligne
+1. Va sur https://inloop.github.io/svg2android/
+2. Upload ton SVG
+3. Copie le XML généré
+4. Crée le fichier `circuit_{circuitId}.xml` dans `res/drawable/`
 
-## 🎨 Spécifications des images
+### Étape 3 : Vérifier
 
-### Format requis
-- **Format** : PNG avec transparence
-- **Dimensions recommandées** : 800x600px
-- **Fond** : Transparent ou noir (#000000)
-- **Tracé** : Blanc (#FFFFFF) ou couleur claire
+1. `Build > Make Project` dans Android Studio
+2. Le fichier doit apparaître dans `R.drawable.circuit_xxx`
+3. Le widget chargera automatiquement l'image via `CircuitImageManager`
+
+## 🎨 Spécifications recommandées
+
+- **Format** : Vector Drawable XML (converti depuis SVG)
+- **Viewport** : ~800x600 recommandé
+- **Tracé** : Blanc (#FFFFFF) ou couleur claire sur fond transparent
 - **Style** : Minimaliste, lignes claires
 
-### Traitement des images
-
-#### Avec GIMP (gratuit)
-```bash
-1. Ouvre l'image dans GIMP
-2. Image > Échelle et taille de l'image > 800x600px
-3. Couleurs > Luminosité-Contraste (ajuste pour fond noir)
-4. Calque > Transparence > Ajouter un canal alpha
-5. Sélection > Par couleur > Sélectionne le fond blanc
-6. Édition > Effacer (pour rendre transparent)
-7. Fichier > Exporter comme > PNG
-```
-
-#### Avec ImageMagick (ligne de commande)
-```bash
-# Redimensionner
-convert circuit.png -resize 800x600 circuit_resized.png
-
-# Inverser les couleurs (blanc sur noir)
-convert circuit.png -negate circuit_inverted.png
-
-# Rendre le fond transparent
-convert circuit.png -transparent white circuit_transparent.png
-```
-
-## 📝 Nommage des fichiers
-
-Le widget utilise le `circuitId` de l'API pour charger les images. Voici le mapping :
-
-| Circuit ID (API) | Nom du fichier |
-|------------------|----------------|
-| `bahrain` | `circuit_bahrain.png` |
-| `jeddah` | `circuit_jeddah.png` |
-| `albert_park` | `circuit_albert_park.png` |
-| `monaco` | `circuit_monaco.png` |
-| `silverstone` | `circuit_silverstone.png` |
-| `monza` | `circuit_monza.png` |
-| `spa` | `circuit_spa.png` |
-| `suzuka` | `circuit_suzuka.png` |
-| ... | ... |
-
-⚠️ **Important** : Le nom du fichier doit être exactement `circuit_` + `circuitId` + `.png`
-
-## 🔧 Installation rapide
-
-1. Crée le dossier si nécessaire :
-```bash
-mkdir -p app/src/main/res/drawable
-```
-
-2. Place toutes tes images PNG dans ce dossier
-
-3. Vérifie que les noms correspondent au mapping ci-dessus
-
-4. Rebuild le projet dans Android Studio
+> **Note** : Si un SVG est très complexe (>200 paths), utilise plutôt un PNG dans `drawable-xxhdpi/` nommé `circuit_{circuitId}.png`.
 
 ## 🎯 Image par défaut
 
-Crée une image `circuit_default.png` qui sera affichée si le circuit spécifique n'est pas trouvé.
+Le fichier `circuit_default.xml` existe déjà et sert de fallback lorsqu'un circuit n'a pas d'image dédiée.
 
-Suggestions pour l'image par défaut :
-- Logo F1 simple
-- Icône de drapeau à damier
-- Texte "Circuit non disponible"
-- Silhouette générique de circuit
+## ⚙️ Architecture
 
-## 🔍 Vérification
-
-Après avoir ajouté les images, vérifie dans Android Studio :
-
-1. Ouvre `Build > Make Project`
-2. Si erreur : vérifie les noms de fichiers
-3. Les fichiers doivent apparaître dans `R.drawable.circuit_xxx`
-
-## ⚙️ Personnalisation
-
-Si tu veux modifier la logique de mapping, édite la méthode `getCircuitDrawable()` dans `F1Widget.kt` :
+La logique de chargement est centralisée dans `CircuitImageManager.kt` :
 
 ```kotlin
-private fun getCircuitDrawable(context: Context, circuitId: String): Int {
-    val resourceId = context.resources.getIdentifier(
-        "circuit_$circuitId",
-        "drawable",
-        context.packageName
-    )
-    
-    return if (resourceId != 0) resourceId 
-    else R.drawable.circuit_default
-}
+// Retourne le drawable ID pour un circuitId donné
+CircuitImageManager.getCircuitDrawableRes(context, circuitId)
+// → R.drawable.circuit_monaco ou R.drawable.circuit_default
 ```
 
-## 📊 Taille des fichiers
-
-- Garde chaque PNG sous 100 KB pour optimiser la taille de l'APK
-- Utilise la compression PNG (pngquant, TinyPNG)
-- Total pour 24 circuits : ~2 MB maximum
+Le widget (`F1Widget.kt`) appelle cette méthode pour afficher l'image du circuit.
+Aucun téléchargement réseau n'est nécessaire — tout est local.
 
 ## 🔗 Ressources utiles
 
 - [Wikipedia F1 Circuits](https://commons.wikimedia.org/wiki/Category:Formula_One_circuit_maps)
 - [F1 Sketch](https://f1sketch.com/)
+- [SVG to Android Converter](https://inloop.github.io/svg2android/)
 - [GIMP](https://www.gimp.org/) - Éditeur d'images gratuit
-- [ImageMagick](https://imagemagick.org/) - Outil CLI
-- [TinyPNG](https://tinypng.com/) - Compression PNG

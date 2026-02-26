@@ -5,8 +5,10 @@ import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.util.Log
 import android.widget.RemoteViews
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.work.*
 import com.yomlaiolo.f1widget.R
+import com.yomlaiolo.f1widget.utils.CircuitImageManager
 import com.yomlaiolo.f1widget.utils.DateFormatter
 import java.util.concurrent.TimeUnit
 
@@ -242,29 +244,7 @@ class F1Widget : AppWidgetProvider() {
         }
 
         private fun getCircuitDrawable(context: Context, circuitId: String): Int {
-            // Mapper les IDs de circuits aux ressources drawable
-            // D'abord essayer avec l'ID exact du circuit
-            var resourceId = context.resources.getIdentifier(
-                "circuit_$circuitId",
-                "drawable",
-                context.packageName
-            )
-            
-            // Si pas trouvé, essayer avec l'image par défaut
-            if (resourceId == 0) {
-                resourceId = context.resources.getIdentifier(
-                    "circuit_default",
-                    "drawable",
-                    context.packageName
-                )
-            }
-            
-            // Si toujours pas trouvé (ne devrait jamais arriver), utiliser l'icône de l'app
-            if (resourceId == 0) {
-                resourceId = R.mipmap.ic_launcher
-            }
-            
-            return resourceId
+            return CircuitImageManager.getCircuitDrawableRes(context, circuitId)
         }
     }
 }
