@@ -14,19 +14,26 @@ interface F1ApiService {
     suspend fun getSeasonCalendar(
         @Path("year") year: Int
     ): Response<RaceResponse>
-    
-    @GET("current/next.json")
-    suspend fun getNextRace(): Response<RaceResponse>
-    
+
     @GET("current/driverStandings.json")
     suspend fun getDriverStandings(): Response<StandingsResponse>
     
     @GET("current/constructorStandings.json")
     suspend fun getConstructorStandings(): Response<StandingsResponse>
     
+    @GET("{year}/driverStandings.json")
+    suspend fun getDriverStandingsByYear(
+        @Path("year") year: Int
+    ): Response<StandingsResponse>
+
+    @GET("{year}/constructorStandings.json")
+    suspend fun getConstructorStandingsByYear(
+        @Path("year") year: Int
+    ): Response<StandingsResponse>
+
     companion object {
-        private const val BASE_URL = "http://api.jolpi.ca/ergast/f1/"
-        
+        private const val BASE_URL = "https://api.jolpi.ca/ergast/f1/"
+
         fun create(): F1ApiService {
             val retrofit = Retrofit.Builder()
                 .baseUrl(BASE_URL)

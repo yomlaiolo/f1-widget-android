@@ -11,22 +11,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class F1Repository(private val apiService: F1ApiService) {
-    
-    suspend fun getNextRace(): Race? = withContext(Dispatchers.IO) {
-        try {
-            val response = apiService.getNextRace()
-            if (response.isSuccessful) {
-                response.body()?.mrData?.raceTable?.races?.firstOrNull()
-            } else {
-                Log.e("F1Repository", "Error: ${response.code()}")
-                null
-            }
-        } catch (e: Exception) {
-            Log.e("F1Repository", "Exception: ${e.message}")
-            null
-        }
-    }
-    
+
     data class RaceWithContext(
         val race: Race,
         val totalRaces: Int
@@ -47,7 +32,7 @@ class F1Repository(private val apiService: F1ApiService) {
                     try {
                         val raceDate = dateFormat.parse(race.date)
                         raceDate?.after(now) ?: false
-                    } catch (e: Exception) {
+                    } catch (_: Exception) {
                         false
                     }
                 }
@@ -86,13 +71,18 @@ class F1Repository(private val apiService: F1ApiService) {
     
     suspend fun getDriverStandings(): List<DriverStanding> = withContext(Dispatchers.IO) {
         try {
+            // Essayer la saison courante
             val response = apiService.getDriverStandings()
             if (response.isSuccessful) {
-                response.body()?.mrData?.standingsTable?.standingsLists?.firstOrNull()?.driverStandings ?: emptyList()
-            } else {
-                Log.e("F1Repository", "Error: ${response.code()}")
-                emptyList()
+                val standings = response.body()?.mrData?.standingsTable?.standingsLists?.firstOrNull()?.driverStandings
+                if (!standings.isNullOrEmpty()) {
+                    return@withContext standings
+                }
             }
+            // Fallback : la saison n'a pas encore de classements, on prend l'année précédente
+            Log.d("F1Repository", "No current driver standings, falling back to previous year")
+            val previousYear = Calendar.getInstance().get(Calendar.YEAR) - 1
+            getDriverStandingsByYear(previousYear)
         } catch (e: Exception) {
             Log.e("F1Repository", "Exception: ${e.message}")
             emptyList()
@@ -101,11 +91,46 @@ class F1Repository(private val apiService: F1ApiService) {
     
     suspend fun getConstructorStandings(): List<ConstructorStanding> = withContext(Dispatchers.IO) {
         try {
+            // Essayer la saison courante
             val response = apiService.getConstructorStandings()
+            if (response.isSuccessful) {
+                val standings = response.body()?.mrData?.standingsTable?.standingsLists?.firstOrNull()?.constructorStandings
+                if (!standings.isNullOrEmpty()) {
+                    return@withContext standings
+                }
+            }
+            // Fallback : la saison n'a pas encore de classements, on prend l'année précédente
+            Log.d("F1Repository", "No current constructor standings, falling back to previous year")
+            val previousYear = Calendar.getInstance().get(Calendar.YEAR) - 1
+            getConstructorStandingsByYear(previousYear)
+        } catch (e: Exception) {
+            Log.e("F1Repository", "Exception: ${e.message}")
+            emptyList()
+        }
+    }
+
+    suspend fun getDriverStandingsByYear(year: Int): List<DriverStanding> = withContext(Dispatchers.IO) {
+        try {
+            val response = apiService.getDriverStandingsByYear(year)
+            if (response.isSuccessful) {
+                response.body()?.mrData?.standingsTable?.standingsLists?.firstOrNull()?.driverStandings ?: emptyList()
+            } else {
+                Log.e("F1Repository", "Error getting driver standings for $year: ${response.code()}")
+                emptyList()
+            }
+        } catch (e: Exception) {
+            Log.e("F1Repository", "Exception: ${e.message}")
+            emptyList()
+        }
+    }
+
+    suspend fun getConstructorStandingsByYear(year: Int): List<ConstructorStanding> = withContext(Dispatchers.IO) {
+        try {
+            val response = apiService.getConstructorStandingsByYear(year)
             if (response.isSuccessful) {
                 response.body()?.mrData?.standingsTable?.standingsLists?.firstOrNull()?.constructorStandings ?: emptyList()
             } else {
-                Log.e("F1Repository", "Error: ${response.code()}")
+                Log.e("F1Repository", "Error getting constructor standings for $year: ${response.code()}")
                 emptyList()
             }
         } catch (e: Exception) {

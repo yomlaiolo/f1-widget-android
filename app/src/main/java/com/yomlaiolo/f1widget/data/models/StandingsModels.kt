@@ -22,12 +22,12 @@ data class StandingsList(
 )
 
 data class DriverStanding(
-    @SerializedName("position") val position: String,
-    @SerializedName("positionText") val positionText: String,
-    @SerializedName("points") val points: String,
-    @SerializedName("wins") val wins: String,
-    @SerializedName("Driver") val driver: Driver,
-    @SerializedName("Constructors") val constructors: List<Constructor>
+    @SerializedName("position") val position: String? = null,
+    @SerializedName("positionText") val positionText: String? = null,
+    @SerializedName("points") val points: String? = null,
+    @SerializedName("wins") val wins: String? = null,
+    @SerializedName("Driver") val driver: Driver? = null,
+    @SerializedName("Constructors") val constructors: List<Constructor>? = null
 )
 
 data class Driver(
@@ -47,9 +47,9 @@ data class Constructor(
 )
 
 data class ConstructorStanding(
-    @SerializedName("position") val position: String,
-    @SerializedName("positionText") val positionText: String,
-    @SerializedName("points") val points: String,
-    @SerializedName("wins") val wins: String,
-    @SerializedName("Constructor") val constructor: Constructor
+    @SerializedName("position") val position: String? = null,
+    @SerializedName("positionText") val positionText: String? = null,
+    @SerializedName("points") val points: String? = null,
+    @SerializedName("wins") val wins: String? = null,
+    @SerializedName("Constructor") val constructor: Constructor? = null
 )
