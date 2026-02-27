@@ -1,12 +1,14 @@
 package com.yomlaiolo.f1widget.widget
 
+import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import android.widget.RemoteViews
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.work.*
+import com.yomlaiolo.f1widget.MainActivity
 import com.yomlaiolo.f1widget.R
 import com.yomlaiolo.f1widget.utils.CircuitImageManager
 import com.yomlaiolo.f1widget.utils.DateFormatter
@@ -90,6 +92,18 @@ class F1Widget : AppWidgetProvider() {
         ) {
             val views = RemoteViews(context.packageName, R.layout.f1_widget)
             
+            // Rendre le widget cliquable pour ouvrir l'app
+            val intent = Intent(context, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            }
+            val pendingIntent = PendingIntent.getActivity(
+                context,
+                0,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+            views.setOnClickPendingIntent(R.id.widget_root, pendingIntent)
+
             // Récupérer les données depuis SharedPreferences
             val prefs = context.getSharedPreferences("F1Widget", Context.MODE_PRIVATE)
             

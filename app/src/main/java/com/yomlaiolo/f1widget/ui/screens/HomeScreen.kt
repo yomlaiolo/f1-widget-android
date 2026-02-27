@@ -1,9 +1,8 @@
 package com.yomlaiolo.f1widget.ui.screens
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
@@ -13,11 +12,16 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.yomlaiolo.f1widget.ui.MainViewModel
 import com.yomlaiolo.f1widget.ui.components.ConstructorStandingItem
 import com.yomlaiolo.f1widget.ui.components.DriverStandingItem
+import com.yomlaiolo.f1widget.utils.CircuitImageManager
 import com.yomlaiolo.f1widget.utils.CountryFlags
 import com.yomlaiolo.f1widget.utils.DateFormatter
 
@@ -104,54 +108,68 @@ fun HomeScreen(
 fun NextRaceCard(
     raceWithContext: com.yomlaiolo.f1widget.data.repository.F1Repository.RaceWithContext?
 ) {
+    val context = LocalContext.current
+
+    // Couleurs identiques au widget
+    val widgetBackground = Color(0xFF15151E)
+    val textWhite = Color(0xFFFFFFFF)
+    val textCyan = Color(0xFF00D9FF)
+    val textGray = Color(0xFFAAAAAA)
+    val textDarkGray = Color(0xFF888888)
+    val textLightGray = Color(0xFFCCCCCC)
+    val sprintColor = Color(0xFFFF6600)
+    val qualiColor = Color(0xFFFFD700)
+    val raceColor = Color(0xFFE10600)
+
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = widgetBackground)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp)
+                .padding(12.dp)
         ) {
-            raceWithContext?.let { context ->
-                val race = context.race
-                
-                // En-tête avec drapeau et round
+            raceWithContext?.let { ctx ->
+                val race = ctx.race
+
+                // Ligne 1: Drapeau + Nom GP + Round
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
                         text = CountryFlags.getFlag(race.circuit.location.country),
-                        style = MaterialTheme.typography.headlineLarge
+                        fontSize = 24.sp,
+                        modifier = Modifier.padding(end = 8.dp)
                     )
                     Text(
-                        text = "Round ${race.round}/${context.totalRaces}",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        text = race.raceName,
+                        color = textWhite,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Text(
+                        text = "Round ${race.round}/${ctx.totalRaces}",
+                        color = textCyan,
+                        fontSize = 12.sp,
+                        modifier = Modifier.padding(start = 8.dp)
                     )
                 }
-                
-                Spacer(modifier = Modifier.height(12.dp))
-                
-                // Nom du Grand Prix
-                Text(
-                    text = race.raceName,
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold
-                )
-                
-                // Nom du circuit
+
+                // Ligne 2: Nom du circuit
                 Text(
                     text = race.circuit.circuitName,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = textGray,
+                    fontSize = 13.sp,
+                    maxLines = 1,
+                    modifier = Modifier.padding(top = 2.dp, start = 32.dp)
                 )
                 
-                Spacer(modifier = Modifier.height(8.dp))
-                
-                // Dates du weekend
+                // Ligne 3: Dates du weekend
                 val firstSessionDate = listOfNotNull(
                     race.firstPractice?.date,
                     race.secondPractice?.date,
@@ -165,53 +183,98 @@ fun NextRaceCard(
                 
                 Text(
                     text = weekendDates,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.SemiBold
+                    color = textDarkGray,
+                    fontSize = 12.sp,
+                    modifier = Modifier.padding(top = 2.dp, start = 32.dp)
                 )
                 
-                Spacer(modifier = Modifier.height(16.dp))
-                
-                // Sessions
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    race.firstPractice?.let {
-                        SessionRow("FP1", it.date, it.time)
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Contenu principal: Circuit à gauche, Sessions à droite
+                Row(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    // Image du circuit (gauche)
+                    val circuitResId = CircuitImageManager.getCircuitDrawableRes(
+                        context, race.circuit.circuitId
+                    )
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(100.dp)
+                            .padding(end = 8.dp, top = 4.dp, bottom = 4.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Image(
+                            painter = painterResource(id = circuitResId),
+                            contentDescription = "Circuit ${race.circuit.circuitName}",
+                            modifier = Modifier.fillMaxSize()
+                        )
                     }
-                    race.secondPractice?.let {
-                        SessionRow("FP2", it.date, it.time)
+
+                    // Sessions (droite)
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(3.dp)
+                    ) {
+                        race.firstPractice?.let {
+                            WidgetSessionRow("FP1", it.date, it.time, textDarkGray, textLightGray)
+                        }
+                        race.secondPractice?.let {
+                            WidgetSessionRow("FP2", it.date, it.time, textDarkGray, textLightGray)
+                        }
+                        race.thirdPractice?.let {
+                            WidgetSessionRow("FP3", it.date, it.time, textDarkGray, textLightGray)
+                        }
+                        race.sprint?.let {
+                            WidgetSessionRow("SPRINT", it.date, it.time, sprintColor, textLightGray)
+                        }
+                        race.qualifying?.let {
+                            WidgetSessionRow("QUALIFS", it.date, it.time, qualiColor, textLightGray)
+                        }
+                        WidgetSessionRow("COURSE", race.date, race.time ?: "", raceColor, textWhite, isBold = true)
                     }
-                    race.thirdPractice?.let {
-                        SessionRow("FP3", it.date, it.time)
-                    }
-                    race.sprint?.let {
-                        SessionRow("Sprint", it.date, it.time)
-                    }
-                    race.qualifying?.let {
-                        SessionRow("Qualifications", it.date, it.time)
-                    }
-                    SessionRow("Course", race.date, race.time ?: "")
                 }
+            } ?: run {
+                Text(
+                    text = "Chargement...",
+                    color = textLightGray,
+                    modifier = Modifier.padding(16.dp)
+                )
             }
         }
     }
 }
 
 @Composable
-fun SessionRow(name: String, date: String, time: String) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(
-            text = name,
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Medium
-        )
-        Text(
-            text = "${DateFormatter.formatSessionDate(date)} - ${DateFormatter.formatTime(time)}",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+fun WidgetSessionRow(
+    name: String,
+    date: String,
+    time: String,
+    labelColor: Color,
+    timeColor: Color,
+    isBold: Boolean = false
+) {
+    val formatted = DateFormatter.formatSessionDateTime(date, time)
+    if (formatted.isNotEmpty()) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = name,
+                color = labelColor,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.width(70.dp)
+            )
+            Text(
+                text = formatted,
+                color = timeColor,
+                fontSize = 11.sp,
+                fontWeight = if (isBold) FontWeight.Bold else FontWeight.Normal
+            )
+        }
     }
 }
 
