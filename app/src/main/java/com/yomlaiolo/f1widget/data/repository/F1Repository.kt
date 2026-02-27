@@ -71,18 +71,13 @@ class F1Repository(private val apiService: F1ApiService) {
     
     suspend fun getDriverStandings(): List<DriverStanding> = withContext(Dispatchers.IO) {
         try {
-            // Essayer la saison courante
             val response = apiService.getDriverStandings()
             if (response.isSuccessful) {
-                val standings = response.body()?.mrData?.standingsTable?.standingsLists?.firstOrNull()?.driverStandings
-                if (!standings.isNullOrEmpty()) {
-                    return@withContext standings
-                }
+                response.body()?.mrData?.standingsTable?.standingsLists?.firstOrNull()?.driverStandings ?: emptyList()
+            } else {
+                Log.e("F1Repository", "Error: ${response.code()}")
+                emptyList()
             }
-            // Fallback : la saison n'a pas encore de classements, on prend l'année précédente
-            Log.d("F1Repository", "No current driver standings, falling back to previous year")
-            val previousYear = Calendar.getInstance().get(Calendar.YEAR) - 1
-            getDriverStandingsByYear(previousYear)
         } catch (e: Exception) {
             Log.e("F1Repository", "Exception: ${e.message}")
             emptyList()
@@ -91,18 +86,13 @@ class F1Repository(private val apiService: F1ApiService) {
     
     suspend fun getConstructorStandings(): List<ConstructorStanding> = withContext(Dispatchers.IO) {
         try {
-            // Essayer la saison courante
             val response = apiService.getConstructorStandings()
             if (response.isSuccessful) {
-                val standings = response.body()?.mrData?.standingsTable?.standingsLists?.firstOrNull()?.constructorStandings
-                if (!standings.isNullOrEmpty()) {
-                    return@withContext standings
-                }
+                response.body()?.mrData?.standingsTable?.standingsLists?.firstOrNull()?.constructorStandings ?: emptyList()
+            } else {
+                Log.e("F1Repository", "Error: ${response.code()}")
+                emptyList()
             }
-            // Fallback : la saison n'a pas encore de classements, on prend l'année précédente
-            Log.d("F1Repository", "No current constructor standings, falling back to previous year")
-            val previousYear = Calendar.getInstance().get(Calendar.YEAR) - 1
-            getConstructorStandingsByYear(previousYear)
         } catch (e: Exception) {
             Log.e("F1Repository", "Exception: ${e.message}")
             emptyList()

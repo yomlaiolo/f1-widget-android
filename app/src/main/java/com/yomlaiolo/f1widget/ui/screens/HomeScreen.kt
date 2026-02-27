@@ -1,6 +1,7 @@
 package com.yomlaiolo.f1widget.ui.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,7 +29,8 @@ import com.yomlaiolo.f1widget.utils.DateFormatter
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    viewModel: MainViewModel
+    viewModel: MainViewModel,
+    onNavigateToStandings: (Int) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     
@@ -84,7 +86,8 @@ fun HomeScreen(
                 item {
                     ClassementSection(
                         title = "Classement Pilotes",
-                        items = uiState.driverStandings.take(5)
+                        items = uiState.driverStandings.take(5),
+                        onClick = { onNavigateToStandings(0) }
                     ) { standing ->
                         DriverStandingItem(standing)
                     }
@@ -94,7 +97,8 @@ fun HomeScreen(
                 item {
                     ClassementSection(
                         title = "Classement Constructeurs",
-                        items = uiState.constructorStandings.take(5)
+                        items = uiState.constructorStandings.take(5),
+                        onClick = { onNavigateToStandings(1) }
                     ) { standing ->
                         ConstructorStandingItem(standing)
                     }
@@ -282,10 +286,13 @@ fun WidgetSessionRow(
 fun <T> ClassementSection(
     title: String,
     items: List<T>,
+    onClick: () -> Unit = {},
     itemContent: @Composable (T) -> Unit
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
         shape = RoundedCornerShape(16.dp)
     ) {
         Column(
@@ -301,9 +308,17 @@ fun <T> ClassementSection(
             
             Spacer(modifier = Modifier.height(12.dp))
             
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                items.forEach { item ->
-                    itemContent(item)
+            if (items.isEmpty()) {
+                Text(
+                    text = "Pas encore de résultats pour cette saison.",
+                    color = Color(0xFFAAAAAA),
+                    fontSize = 13.sp
+                )
+            } else {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    items.forEach { item ->
+                        itemContent(item)
+                    }
                 }
             }
         }

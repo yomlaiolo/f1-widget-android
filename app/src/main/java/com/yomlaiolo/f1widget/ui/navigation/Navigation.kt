@@ -75,7 +75,20 @@ fun F1App(
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Screen.Home.route) {
-                HomeScreen(viewModel = viewModel)
+                HomeScreen(
+                    viewModel = viewModel,
+                    onNavigateToStandings = { tabIndex ->
+                        viewModel.setStandingsTab(tabIndex)
+                        viewModel.loadStandingsForYear(java.util.Calendar.getInstance().get(java.util.Calendar.YEAR))
+                        navController.navigate(Screen.Standings.route) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
+                )
             }
             composable(Screen.Standings.route) {
                 StandingsScreen(viewModel = viewModel)

@@ -35,7 +35,7 @@ fun StandingsScreen(
     viewModel: MainViewModel
 ) {
     val standingsState by viewModel.standingsState.collectAsState()
-    var selectedTabIndex by remember { mutableStateOf(0) }
+    val selectedTabIndex by viewModel.selectedStandingsTab.collectAsState()
     var showYearPicker by remember { mutableStateOf(false) }
     val currentYear = Calendar.getInstance().get(Calendar.YEAR)
 
@@ -109,24 +109,24 @@ fun StandingsScreen(
                     contentColor = textCyan,
                     modifier = Modifier.padding(horizontal = 16.dp)
                 ) {
-                    Tab(
-                        selected = selectedTabIndex == 0,
-                        onClick = { selectedTabIndex = 0 },
-                        selectedContentColor = textCyan,
-                        unselectedContentColor = textGray,
-                        text = {
-                            Text(
-                                "Pilotes",
-                                color = if (selectedTabIndex == 0) textCyan else textGray,
-                                fontWeight = if (selectedTabIndex == 0) FontWeight.Bold else FontWeight.Normal
-                            )
-                        }
-                    )
-                    Tab(
-                        selected = selectedTabIndex == 1,
-                        onClick = { selectedTabIndex = 1 },
-                        selectedContentColor = textCyan,
-                        unselectedContentColor = textGray,
+                Tab(
+                    selected = selectedTabIndex == 0,
+                    onClick = { viewModel.setStandingsTab(0) },
+                    selectedContentColor = textCyan,
+                    unselectedContentColor = textGray,
+                    text = {
+                        Text(
+                            "Pilotes",
+                            color = if (selectedTabIndex == 0) textCyan else textGray,
+                            fontWeight = if (selectedTabIndex == 0) FontWeight.Bold else FontWeight.Normal
+                        )
+                    }
+                )
+                Tab(
+                    selected = selectedTabIndex == 1,
+                    onClick = { viewModel.setStandingsTab(1) },
+                    selectedContentColor = textCyan,
+                    unselectedContentColor = textGray,
                         text = {
                             Text(
                                 "Constructeurs",

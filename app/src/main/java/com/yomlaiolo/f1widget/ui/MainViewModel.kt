@@ -40,6 +40,13 @@ class MainViewModel : ViewModel() {
     private val _standingsState = MutableStateFlow(StandingsUiState())
     val standingsState: StateFlow<StandingsUiState> = _standingsState.asStateFlow()
 
+    private val _selectedStandingsTab = MutableStateFlow(0)
+    val selectedStandingsTab: StateFlow<Int> = _selectedStandingsTab.asStateFlow()
+
+    fun setStandingsTab(index: Int) {
+        _selectedStandingsTab.value = index
+    }
+
     init {
         loadData()
     }
