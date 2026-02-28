@@ -30,6 +30,13 @@ data class StandingsUiState(
     val error: String? = null
 )
 
+data class CalendarUiState(
+    val isLoading: Boolean = false,
+    val selectedYear: Int = Calendar.getInstance().get(Calendar.YEAR),
+    val races: List<Race> = emptyList(),
+    val error: String? = null
+)
+
 class MainViewModel : ViewModel() {
     
     private val repository = F1Repository(F1ApiService.create())
@@ -39,6 +46,9 @@ class MainViewModel : ViewModel() {
     
     private val _standingsState = MutableStateFlow(StandingsUiState())
     val standingsState: StateFlow<StandingsUiState> = _standingsState.asStateFlow()
+
+    private val _calendarState = MutableStateFlow(CalendarUiState())
+    val calendarState: StateFlow<CalendarUiState> = _calendarState.asStateFlow()
 
     private val _selectedStandingsTab = MutableStateFlow(0)
     val selectedStandingsTab: StateFlow<Int> = _selectedStandingsTab.asStateFlow()
@@ -100,6 +110,33 @@ class MainViewModel : ViewModel() {
                 )
             } catch (e: Exception) {
                 _standingsState.value = _standingsState.value.copy(
+                    isLoading = false,
+                    error = e.message ?: "Erreur de chargement"
+                )
+            }
+        }
+    }
+
+    fun loadCalendarForYear(year: Int) {
+        if (year == _calendarState.value.selectedYear && _calendarState.value.races.isNotEmpty()) return
+
+        viewModelScope.launch {
+            _calendarState.value = _calendarState.value.copy(
+                isLoading = true,
+                selectedYear = year,
+                error = null
+            )
+
+            try {
+                val races = repository.getCalendarByYear(year)
+
+                _calendarState.value = CalendarUiState(
+                    isLoading = false,
+                    selectedYear = year,
+                    races = races
+                )
+            } catch (e: Exception) {
+                _calendarState.value = _calendarState.value.copy(
                     isLoading = false,
                     error = e.message ?: "Erreur de chargement"
                 )

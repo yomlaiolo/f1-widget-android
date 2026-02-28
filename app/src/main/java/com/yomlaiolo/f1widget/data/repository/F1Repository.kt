@@ -69,6 +69,21 @@ class F1Repository(private val apiService: F1ApiService) {
         }
     }
     
+    suspend fun getCalendarByYear(year: Int): List<Race> = withContext(Dispatchers.IO) {
+        try {
+            val response = apiService.getSeasonCalendar(year)
+            if (response.isSuccessful) {
+                response.body()?.mrData?.raceTable?.races ?: emptyList()
+            } else {
+                Log.e("F1Repository", "Error getting calendar for $year: ${response.code()}")
+                emptyList()
+            }
+        } catch (e: Exception) {
+            Log.e("F1Repository", "Exception: ${e.message}")
+            emptyList()
+        }
+    }
+
     suspend fun getDriverStandings(): List<DriverStanding> = withContext(Dispatchers.IO) {
         try {
             val response = apiService.getDriverStandings()

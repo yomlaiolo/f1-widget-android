@@ -1,11 +1,9 @@
 package com.yomlaiolo.f1widget.ui.screens
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -21,6 +19,7 @@ import androidx.compose.ui.unit.sp
 import com.yomlaiolo.f1widget.ui.MainViewModel
 import com.yomlaiolo.f1widget.ui.components.ConstructorStandingItem
 import com.yomlaiolo.f1widget.ui.components.DriverStandingItem
+import com.yomlaiolo.f1widget.ui.components.YearPickerDialog
 import java.util.Calendar
 
 private val screenBackground = Color(0xFF0D0D15)
@@ -193,80 +192,6 @@ fun StandingsScreen(
     }
 }
 
-@Composable
-fun YearPickerDialog(
-    selectedYear: Int,
-    currentYear: Int,
-    onYearSelected: (Int) -> Unit,
-    onDismiss: () -> Unit
-) {
-    val years = (currentYear downTo 1950).toList()
-    val listState = rememberLazyListState()
-
-    // Scroll jusqu'à l'année sélectionnée au lancement
-    LaunchedEffect(Unit) {
-        val index = years.indexOf(selectedYear)
-        if (index >= 0) {
-            listState.scrollToItem(index)
-        }
-    }
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        containerColor = cardBackground,
-        title = {
-            Text(
-                text = "Choisir une saison",
-                color = textWhite,
-                fontWeight = FontWeight.Bold
-            )
-        },
-        text = {
-            LazyColumn(
-                state = listState,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(400.dp)
-            ) {
-                items(years) { year ->
-                    val isSelected = year == selectedYear
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { onYearSelected(year) }
-                            .background(
-                                if (isSelected) textCyan.copy(alpha = 0.15f)
-                                else Color.Transparent,
-                                shape = RoundedCornerShape(8.dp)
-                            )
-                            .padding(horizontal = 16.dp, vertical = 12.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(
-                            text = "$year",
-                            color = if (isSelected) textCyan else textWhite,
-                            fontSize = 16.sp,
-                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
-                        )
-                        if (year == currentYear) {
-                            Text(
-                                text = "en cours",
-                                color = textGray,
-                                fontSize = 12.sp
-                            )
-                        }
-                    }
-                }
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Fermer", color = textCyan)
-            }
-        }
-    )
-}
 
 @Composable
 fun DriverStandingsTab(standings: List<com.yomlaiolo.f1widget.data.models.DriverStanding>) {

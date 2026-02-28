@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,15 +20,20 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,10 +45,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.yomlaiolo.f1widget.data.models.Race
 import com.yomlaiolo.f1widget.ui.MainViewModel
+import com.yomlaiolo.f1widget.ui.components.YearPickerDialog
 import com.yomlaiolo.f1widget.utils.CircuitImageManager
 import com.yomlaiolo.f1widget.utils.CountryFlags
 import com.yomlaiolo.f1widget.utils.DateFormatter
@@ -51,41 +59,128 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
+private val screenBackground = Color(0xFF0D0D15)
+private val cardBackground = Color(0xFF15151E)
+private val textWhite = Color(0xFFFFFFFF)
+private val textGray = Color(0xFFAAAAAA)
+private val textCyan = Color(0xFF00D9FF)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CalendarScreen(
     viewModel: MainViewModel
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val calendarState by viewModel.calendarState.collectAsState()
+    var showYearPicker by remember { mutableStateOf(false) }
+    val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+
+    // Charger le calendrier au premier affichage
+    LaunchedEffect(Unit) {
+        if (calendarState.races.isEmpty() && !calendarState.isLoading) {
+            viewModel.loadCalendarForYear(calendarState.selectedYear)
+        }
+    }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Calendrier ${Calendar.getInstance().get(Calendar.YEAR)}") })
-        }) { padding ->
-        if (uiState.isLoading) {
-            Box(
+                title = { Text("Calendrier") },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = screenBackground,
+                    titleContentColor = textWhite
+                )
+            )
+        },
+        containerColor = screenBackground
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+        ) {
+            // Sélecteur de saison
+            Card(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding),
-                contentAlignment = Alignment.Center
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .clickable { showYearPicker = true },
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = cardBackground)
             ) {
-                CircularProgressIndicator()
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = "Saison",
+                        color = textGray,
+                        fontSize = 14.sp
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "${calendarState.selectedYear}",
+                        color = textCyan,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Icon(
+                        imageVector = Icons.Default.ArrowDropDown,
+                        contentDescription = "Changer de saison",
+                        tint = textCyan
+                    )
+                }
             }
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                val totalRaces = uiState.seasonCalendar.size
-                items(uiState.seasonCalendar) { race ->
-                    RaceCard(race, totalRaces)
+
+            // Contenu
+            if (calendarState.isLoading) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = textCyan)
+                }
+            } else if (calendarState.races.isEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(32.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Aucun calendrier disponible pour cette saison.",
+                        fontSize = 14.sp,
+                        textAlign = TextAlign.Center,
+                        color = textGray
+                    )
+                }
+            } else {
+                LazyColumn(
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    val totalRaces = calendarState.races.size
+                    items(calendarState.races) { race ->
+                        RaceCard(race, totalRaces)
+                    }
                 }
             }
         }
+    }
+
+    // Dialog de sélection de saison
+    if (showYearPicker) {
+        YearPickerDialog(
+            selectedYear = calendarState.selectedYear,
+            currentYear = currentYear,
+            onYearSelected = { year ->
+                showYearPicker = false
+                viewModel.loadCalendarForYear(year)
+            },
+            onDismiss = { showYearPicker = false }
+        )
     }
 }
 
@@ -239,60 +334,73 @@ fun RaceCard(race: Race, totalRaces: Int) {
                         modifier = Modifier.weight(1f),
                         verticalArrangement = Arrangement.spacedBy(3.dp)
                     ) {
-                        race.firstPractice?.let {
-                            CalendarSessionRow(
-                                "FP1",
-                                it.date,
-                                it.time,
-                                textDarkGray,
-                                textLightGray,
-                                isPast
+                        val hasSessions = race.firstPractice != null || race.secondPractice != null ||
+                                race.thirdPractice != null || race.sprint != null || race.qualifying != null
+
+                        if (hasSessions) {
+                            race.firstPractice?.let {
+                                CalendarSessionRow(
+                                    "FP1",
+                                    it.date,
+                                    it.time,
+                                    textDarkGray,
+                                    textLightGray,
+                                    isPast
+                                )
+                            }
+                            race.secondPractice?.let {
+                                CalendarSessionRow(
+                                    "FP2",
+                                    it.date,
+                                    it.time,
+                                    textDarkGray,
+                                    textLightGray,
+                                    isPast
+                                )
+                            }
+                            race.thirdPractice?.let {
+                                CalendarSessionRow(
+                                    "FP3",
+                                    it.date,
+                                    it.time,
+                                    textDarkGray,
+                                    textLightGray,
+                                    isPast
+                                )
+                            }
+                            race.sprint?.let {
+                                CalendarSessionRow(
+                                    "SPRINT",
+                                    it.date,
+                                    it.time,
+                                    sprintColor,
+                                    textLightGray,
+                                    isPast
+                                )
+                            }
+                            race.qualifying?.let {
+                                CalendarSessionRow(
+                                    "QUALIFS",
+                                    it.date,
+                                    it.time,
+                                    qualiColor,
+                                    textLightGray,
+                                    isPast
+                                )
+                            }
+                        } else {
+                            Text(
+                                text = "Horaires non disponibles",
+                                color = textDarkGray,
+                                fontSize = 11.sp,
+                                modifier = Modifier.padding(bottom = 4.dp)
                             )
                         }
-                        race.secondPractice?.let {
-                            CalendarSessionRow(
-                                "FP2",
-                                it.date,
-                                it.time,
-                                textDarkGray,
-                                textLightGray,
-                                isPast
-                            )
-                        }
-                        race.thirdPractice?.let {
-                            CalendarSessionRow(
-                                "FP3",
-                                it.date,
-                                it.time,
-                                textDarkGray,
-                                textLightGray,
-                                isPast
-                            )
-                        }
-                        race.sprint?.let {
-                            CalendarSessionRow(
-                                "SPRINT",
-                                it.date,
-                                it.time,
-                                sprintColor,
-                                textLightGray,
-                                isPast
-                            )
-                        }
-                        race.qualifying?.let {
-                            CalendarSessionRow(
-                                "QUALIFS",
-                                it.date,
-                                it.time,
-                                qualiColor,
-                                textLightGray,
-                                isPast
-                            )
-                        }
+
                         CalendarSessionRow(
                             "COURSE",
                             race.date,
-                            race.time ?: "",
+                            race.time,
                             raceColor,
                             textWhite,
                             isPast,
@@ -309,13 +417,20 @@ fun RaceCard(race: Race, totalRaces: Int) {
 private fun CalendarSessionRow(
     name: String,
     date: String,
-    time: String,
+    time: String?,
     labelColor: Color,
     timeColor: Color,
     isPast: Boolean,
     isBold: Boolean = false
 ) {
-    val formatted = DateFormatter.formatSessionDateTime(date, time)
+    // Essayer date+heure, sinon juste la date formatée
+    val formatted = if (!time.isNullOrEmpty()) {
+        DateFormatter.formatSessionDateTime(date, time).ifEmpty {
+            DateFormatter.formatSessionDate(date)
+        }
+    } else {
+        DateFormatter.formatSessionDate(date)
+    }
     if (formatted.isNotEmpty()) {
         Row(
             modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically

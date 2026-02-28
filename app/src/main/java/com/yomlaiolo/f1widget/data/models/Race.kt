@@ -83,5 +83,5 @@ data class Session(
     val date: String,
     
     @SerializedName("time")
-    val time: String
+    val time: String? = null
 )

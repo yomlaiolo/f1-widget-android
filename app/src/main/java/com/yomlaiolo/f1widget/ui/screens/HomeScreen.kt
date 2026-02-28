@@ -236,7 +236,7 @@ fun NextRaceCard(
                         race.qualifying?.let {
                             WidgetSessionRow("QUALIFS", it.date, it.time, qualiColor, textLightGray)
                         }
-                        WidgetSessionRow("COURSE", race.date, race.time ?: "", raceColor, textWhite, isBold = true)
+                        WidgetSessionRow("COURSE", race.date, race.time, raceColor, textWhite, isBold = true)
                     }
                 }
             } ?: run {
@@ -254,12 +254,18 @@ fun NextRaceCard(
 fun WidgetSessionRow(
     name: String,
     date: String,
-    time: String,
+    time: String?,
     labelColor: Color,
     timeColor: Color,
     isBold: Boolean = false
 ) {
-    val formatted = DateFormatter.formatSessionDateTime(date, time)
+    val formatted = if (!time.isNullOrEmpty()) {
+        DateFormatter.formatSessionDateTime(date, time).ifEmpty {
+            DateFormatter.formatSessionDate(date)
+        }
+    } else {
+        DateFormatter.formatSessionDate(date)
+    }
     if (formatted.isNotEmpty()) {
         Row(
             modifier = Modifier.fillMaxWidth(),
