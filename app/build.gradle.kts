@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.yomlaiolo.f1widget"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.yomlaiolo.f1widget"
